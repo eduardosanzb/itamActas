@@ -9,5 +9,6 @@
     <modules>
         <module>ItamActasActiviti</module>
         <module>ItamActasServices</module>
+        <module>ItamActasPersistence</module>
     </modules>    
 </project>
