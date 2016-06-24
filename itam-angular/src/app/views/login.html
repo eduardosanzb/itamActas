@@ -1,0 +1,38 @@
+    <md-content class="md-padding login-form" layout-xs="column" layout="row" layout-align="center center" style="width:100%;">
+        <div flex-xs flex-gt-xs="200" layout="column" layout-align="center center">
+            <md-card class="card-200-center" style="min-width: 400px !important;">
+                <div style= "padding-top: 10px;">
+                    <img ng-src="{{vm.imagePath}}" class="md-card-image login-img" alt="Washed Out">
+                </div>
+                <form  class="signup_form">
+                <div class="md-padding" layout-align="center">
+                    <div layout="row">
+                        <md-input-container flex="100">
+                            <label>Correo</label>
+                            <input type="email" ng-model="vm.credentials.email">
+                        </md-input-container>
+                    </div>
+                    <div layout="row">
+                    <md-input-container flex="100">
+                        <label>Contraseña</label>
+                        <input type="password" ng-model="vm.credentials.password">
+                    </md-input-container>
+                        </div>
+                    
+                    
+
+                <md-card-actions layout="row" layout-align="center">
+                    <br>
+                    <center>
+                        <md-button class="md-primary md-fab login_button" type="submit" ng-click="vm.login()"><i class="material-icons">arrow_forward</i></md-button>
+
+                    </center>
+                    </form>
+                </md-card-actions>
+                <md-card-content>
+
+                </md-card-content>
+
+            </md-card>
+        </div>
+    </md-content>

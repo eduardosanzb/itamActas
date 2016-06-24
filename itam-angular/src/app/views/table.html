@@ -1,0 +1,66 @@
+
+
+<md-content class="md-padding">
+    <md-card style="margin:0px">
+            <md-subheader>Filtrar por busqueda</md-subheader>
+
+            <md-input-container style="margin:15px;">
+                <label>Buscar</label>
+                <input type="text" ng-model="title">
+            </md-input-container>
+
+            <div ng-hide="true">
+                {{(filteredItems = (vm.tableData | filter: title))}}
+            </div>
+        </md-card>
+  <mdt-table 
+      paginated-rows="{isEnabled: true, rowsPerPageValues: [5,10,20,100]}"
+      sortable-columns="true"
+      animate-sort-icon="true"
+      ripple-effect="true"
+      table-card="{title:'Tareas por Activar'}"
+      mdt-row="{'data': filteredItems,
+                      'table-row-id-key': ['cm', 'group', 'teacher', 'subject', 'chief','date','activated'],
+                      'column-keys': ['cm', 'group', 'teacher', 'subject', 'chief','date']}"
+
+      selectable-rows="true"
+      selected-row-callback="vm.selectedRowCallback(rows)">
+    
+    <mdt-header-row>
+      <mdt-column align-rule="left" 
+                  column-definition="Periodo de alumnos">
+                  CM</mdt-column>
+      <mdt-column align-rule="left" 
+                  column-definition="Periodo de alumnos">
+                  Grupo</mdt-column>
+      <mdt-column align-rule="left" 
+                  column-definition="Periodo de alumnos">
+                  Profesor</mdt-column>
+      <mdt-column align-rule="left" 
+                  column-definition="Periodo de alumnos">
+                  Materia</mdt-column>
+      <mdt-column align-rule="left" 
+                  column-definition="Periodo de alumnos">
+                  Jefe de Departamento</mdt-column>
+      <mdt-column align-rule="left" 
+                  column-definition="Periodo de alumnos">
+                  Fecha</mdt-column>
+      
+    </mdt-header-row>
+
+    <mdt-row ng-repeat="data in vm.tableData" ng-click="test()">
+      <mdt-cell>{{data.cm}}</mdt-cell>
+      <mdt-cell>{{data.group}}</mdt-cell>
+      <mdt-cell>{{data.teacher}}</mdt-cell>
+      <mdt-cell>{{data.subject}}</mdt-cell>
+      <mdt-cell>{{data.chief}}</mdt-cell>
+      <mdt-cell>{{data.date}}</mdt-cell>
+    </mdt-row>
+  </mdt-table>
+
+  <section layout="row" layout-align="end center">
+    <md-button class="md-raised md-button md-custom-theme md-ink-ripple" ng-click="vm.activateInstances()">Activar Actas</md-button> 
+  </section>
+</md-content>
+
+
