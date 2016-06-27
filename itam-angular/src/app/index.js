@@ -2,6 +2,13 @@
 
 angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
   'ngSanitize', 'ui.router', 'ngMaterial', 'nvd3', 'app', 'md.data.table','mdDataTable'])
+  
+  .run(function($rootScope){
+    $rootScope.$on('$stateChangeSuccess', function(event, to, toParams, from, fromParams){
+      $rootScope.previousState = from;
+      //console.log(from);
+    });
+  })
 
   .config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider,
                     $mdIconProvider) {
@@ -34,6 +41,15 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
         controllerAs: 'vm',
         data: {
           title: 'transactions'
+        }
+      })
+      .state('home.grading', {
+        url: '/grading/:transactionId',
+        templateUrl: 'app/views/partials/grading.html',
+        controller: 'GradingController',
+        controllerAs: 'vm',
+        data: {
+          title: 'Grading'
         }
       })
       .state('home.table', {

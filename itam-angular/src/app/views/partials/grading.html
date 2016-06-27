@@ -1,0 +1,50 @@
+<md-content ng-controller="GradingController as vm"  layout-padding>
+    <div layout="row" layout-xs="column">
+          <md-toobar flex="20" style="margin:0px" >
+            <md-subheader>Filtrar por busqueda</md-subheader>
+            <md-input-container style="margin:15px;">
+                <label>Buscar</label>
+                <input type="text" ng-model="vm.filter.search">
+            </md-input-container>
+          </md-toobar>
+    </div>
+    <md-table-container>
+          <table md-table>
+            <thead md-head md-order="vm.query.order" >
+              <tr md-row>
+                <th md-column md-order-by="vm.tableData.id"><span>Clave Única</span></th>
+                <th md-column md-order-by="vm.tableData.name"><span>Nombre del Alumno</span></th>
+                <th md-column >
+                  <md-icon>format_list_numbered</md-icon>
+                  <span>Calificar</span>
+                </th>
+                <!-- <th md-column>
+                  <md-icon>comments</md-icon>
+                  <span>Comentarios</span>
+                </th> -->
+              </tr>
+            </thead>
+            <tbody md-body>
+              <tr md-row md-select="vm.tableData"   ng-repeat="data in vm.tableData | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
+                <td md-cell>{{data.id}}</td>
+                <td md-cell>{{data.name}}</td>
+                <td md-cell ng-click="vm.editGrade($event, data)" ng-class="{'md-placeholder': !data.grade}">
+                  {{data.grade || 'Agrega la Calificacion'}}
+                </td>
+                <!-- <td md-cell ng-click="vm.editComment($event, data)" ng-class="{'md-placeholder': !data.comment}">
+                  {{data.comment || 'Agrega un Comentario'}}
+                </td> -->
+              </tr>
+            </tbody>
+          </table>
+    </md-table-container>
+    <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
+    <section  layout="row" layout-align="end center" >
+          <md-button ng-click="vm.printPdf()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Revisar Acta</md-tooltip><i class="material-icons">picture_as_pdf</i></md-button>
+          <md-button ng-click="vm.saveDraft()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Guardar Borrador</md-tooltip><i class="material-icons">save</i></md-button>
+          <md-button ng-click="vm.sendTransaction()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Firmar y Enviar Acta</md-tooltip><i class="material-icons">email</i></md-button>
+
+
+    </section>
+</md-content>
+

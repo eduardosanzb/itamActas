@@ -21,7 +21,7 @@
         subject: 'COM-11212',
         group: '023',
         title: 'Maquinas de Turing 2',
-        inspected: false
+        inspected: true
       },
       {
         period: '3',

@@ -11,7 +11,8 @@
 
       $http({
           method: 'GET',
-          url: 'http://profesor1:welcome1@192.168.1.98:8080/activiti-rest/service/runtime/tasks?assignee=profesor1'
+          //url: 'http://profesor1:welcome1@192.168.1.98:8080/activiti-rest/service/runtime/tasks?assignee=profesor1'
+            url: 'http://admin:welcome1@192.168.1.98:8080/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data'
         }).then(function successCallback(response) {
             // this callback will be called asynchronously
             // when the response is available
