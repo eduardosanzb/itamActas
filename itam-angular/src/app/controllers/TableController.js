@@ -26,6 +26,7 @@
      */
         var vm = this;
         /*INITIALIZING VARIABLES*/
+          vm.selected = [];
           vm.limitOptions = [5, 10, 15];
           vm.filter = {}
           vm.query = {
@@ -36,7 +37,7 @@
           vm.options = {
                 rowSelection: true,
                 multiSelect: true,
-                autoSelect: true,
+                autoSelect: false,
                 decapitate: false,
                 largeEditDialog: false,
                 boundaryLinks: true,

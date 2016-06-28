@@ -1,10 +1,13 @@
 <md-content layout-padding layout-wrap>
-    <md-toobar style="margin:0px" >
+    <md-toobar layout="row" style="margin:0px" >
             <md-subheader>Filtrar por busqueda</md-subheader>
             <md-input-container style="margin:15px;">
                 <label>Buscar</label>
                 <input type="text" ng-model="vm.filter.search">
             </md-input-container>
+             <section  layout="row" layout-align="end center" >
+          <md-button ng-click="vm.printPdf()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Revisar Acta</md-tooltip><i class="material-icons">play_arrow</i></md-button>
+        </section>
     </md-toobar>
     <md-table-container>  
           <table md-table md-row-select="vm.options.rowSelection" 
@@ -22,7 +25,7 @@
               </tr>
             </thead>
             <tbody md-body>
-              <tr md-row md-select="vm.tableData"  md-auto-select="vm.options.autoSelect"  ng-repeat="data in vm.tableData | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
+              <tr md-row md-select="data"  md-auto-select="vm.options.autoSelect"  ng-repeat="data in vm.tableData | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
                 <td md-cell>{{data.cm}}</td>
                 <td md-cell>{{data.group}}</td>
                 <td md-cell>{{data.subject}}</td>
@@ -34,4 +37,5 @@
           </table>
         </md-table-container>
         <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
+       
 </md-content>
