@@ -1,17 +1,25 @@
 'use strict';
 
 angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
-  'ngSanitize', 'ui.router', 'ngMaterial', 'nvd3', 'app', 'md.data.table','mdDataTable'])
-  
+  'ngSanitize', 'ui.router', 'ngMaterial', 'nvd3', 'app', 'md.data.table',
+  'mdDataTable','chart.js','googlechart'])
+
   .run(function($rootScope){
     $rootScope.$on('$stateChangeSuccess', function(event, to, toParams, from, fromParams){
       $rootScope.previousState = from;
       //console.log(from);
     });
   })
+ 
 
   .config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider,
-                    $mdIconProvider) {
+                    $mdIconProvider, ChartJsProvider, $httpProvider) {
+
+     //$httpProvider.defaults.withCredentials = true;
+     // $httpProvider.defaults.useXDomain = true;
+     // delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    
+    ChartJsProvider.setOptions({ colors : [ '#096729', '#096729', '#096729', '#46B096729FBD', '#096729', '#096729', '#096729'] });
     $stateProvider
       .state('login',{
         url: '/login',
@@ -27,11 +35,22 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
         controllerAs: 'vm',
         abstract: true
       })
-      .state('home.dashboard', {
-        url: '/dashboard',
-        templateUrl: 'app/views/dashboard.html',
+      .state('home.revision', {
+        url: '/revision',
+        templateUrl: 'app/views/revision.html',
+        controller: 'RevisionController',
+        controllerAs: 'vm',
         data: {
-          title: 'Dashboard'
+          title: 'Revision'
+        }
+      })
+      .state('home.statistics', {
+        url: '/statistics/:transactionId',
+        templateUrl: 'app/views/statistics.html',
+        controller: 'StatisticsController',
+        controllerAs: 'vm',
+        data: {
+          title: 'Statistics'
         }
       })
       .state('home.transactions', {
@@ -52,13 +71,13 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
           title: 'Grading'
         }
       })
-      .state('home.table', {
-        url: '/table',
-        controller: 'TableController',
+      .state('home.teacher', {
+        url: '/teacher',
+        controller: 'TeacherController',
         controllerAs: 'vm',
-        templateUrl: 'app/views/table.html',
+        templateUrl: 'app/views/table-teacher.html',
         data: {
-          title: 'Table'
+          title: 'Table Teacher'
         }
       });
 

@@ -5,6 +5,8 @@
     "angular": "^1.5.7",
     "angular-animate": "^1.5.7",
     "angular-aria": "^1.5.7",
+    "angular-chart.js": "^1.0.0-alpha8",
+    "angular-google-chart": "^0.1.0",
     "angular-material": "^1.0.9",
     "angular-material-data-table": "^0.10.9",
     "gulp-install": "^0.6.0"

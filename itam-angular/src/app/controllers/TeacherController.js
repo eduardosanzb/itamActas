@@ -2,13 +2,13 @@
 
   angular
     .module('app')
-    .controller('TableController', [
+    .controller('TeacherController', [
       'instanceService', '$mdDialog',
-      TableController
+      TeacherController
     ]);
 
-  function TableController(instanceService, $mdDialog) {
-        /*  Template:   app/views/table.html
+  function TeacherController(instanceService, $mdDialog) {
+        /*  Template:   app/views/table-teacher.html
          *  $state:     home.grading
          *  - Variables
          *  ..- limitOptions: Options for the pagination of the table

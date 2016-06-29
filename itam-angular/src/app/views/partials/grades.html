@@ -1,3 +1,22 @@
-<md-content ng-controller="GradesController as vm" layout="row" layout-align="center center">
-    <nvd3 options="vm.chartOptions" data="vm.warningsChartData"></nvd3>
+
+<md-content  layout="row" layout-align="center center">
+    <section layout="row" layout-align="space-around center">
+        <div>
+          <canvas id="pie" class="chart chart-pie"
+            chart-data="data" chart-labels="labels" chart-options="options">
+          </canvas>
+          <h4 class="md-flex">Aprobados/Reprobados NP</h2> 
+        </div>
+
+        <div>
+          <canvas id="pie" class="chart chart-pie"
+            chart-data="data" chart-labels="labels" chart-options="options">
+          </canvas>
+          <h4 class="md-flex">Aprobados/Reprobados Total</h2> 
+        </div>
+    </section>
+    <!-- <section layout="row" layout-align="end end">
+      <md-button class="flat" aria-label="toggle charts">content</md-button>
+    </section> -->
+    
 </md-content>

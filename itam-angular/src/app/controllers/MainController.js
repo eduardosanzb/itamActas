@@ -8,6 +8,18 @@
        ]);
 
   function MainController(navService, $mdSidenav, $mdBottomSheet, $log, $q, $state, $mdToast, $mdMedia) {
+    /*  COMPLETETemplate:   app/views/transactions.html
+     *  $state:     home.transactions
+     *  - Variables
+     *  ..- limitOptions: Options for the pagination of the table
+     *  ..- filter: Empty object for the query filter of the table
+     *  ..- query: Options for the query/order/pagination of the table
+     *  ..- options: Options for the table structure
+     *  - Services
+     *  ..- tableService: Retrieving dummy data for the table
+     *  - Functions
+     *  ..- startTransaction(tId): Start the garding for the transaction
+     */
     var vm = this;
 
     vm.menuItems = [ ];

@@ -42,6 +42,7 @@
     /*FUNCTIONS BINDING*/
       vm.startTransaction = startTransaction;
     /*SERVICES AND DATA API*/
+    console.log(actasProfesorService.loadAllItems())
       tableService
       .loadAllItems()
       .then(function(tableData) {

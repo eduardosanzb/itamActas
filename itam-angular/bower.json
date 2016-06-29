@@ -17,7 +17,11 @@
     "angular-mocks": "^1.5.0",
     "angular-material-data-table": "~0.10.9",
     "mdDataTable": "~1.4.3",
-    "lodash": "~4.13.1"
+    "lodash": "~4.13.1",
+    "angular-chart.js": "^0.10.2",
+    "angular-google-chart": "0.1.0",
+    "html2canvas": "^0.4.1",
+    "canvas2image": "*"
   },
   "devDependencies": {}
 }

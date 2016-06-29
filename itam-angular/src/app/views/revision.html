@@ -5,6 +5,7 @@
                 <label>Buscar</label>
                 <input type="text" ng-model="vm.filter.search">
             </md-input-container>
+            <button ng-click="vm.test()">test</button>
     </md-toobar>
     <md-table-container>
           <table md-table>
@@ -14,7 +15,7 @@
                 <th md-column md-order-by="vm.tableData.subject"><span>Materia</span></th>
                 <th md-column md-numeric md-order-by="vm.tableData.group" md-desc><span>Grupo</span></th>
                 <th md-column md-numeric md-order-by="vm.tableData.title"><span>Titulo Materia</span></th>
-                <th md-column md-numeric ><span>Inspeccionar</span></th>
+                <th md-column md-numeric ><span>Revisar</span></th>
               </tr>
             </thead>
             <tbody md-body>
@@ -23,7 +24,7 @@
                 <td md-cell>{{data.subject}}</td>
                 <td md-cell>{{data.group}}</td>
                 <td md-cell>{{data.title}}</td>
-                <td md-cell><md-button ng-click="vm.startTransaction('acta1')"
+                <td md-cell><md-button ng-click="vm.startRevision(data.period)" 
                              ng-disabled="data.inspected"
                              aria-label="inspections"
                              class="md-icon-button launch md-raised" >

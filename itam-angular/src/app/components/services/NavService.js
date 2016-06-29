@@ -10,19 +10,19 @@
   function navService($q){
     var menuItems = [
       {
-        name: 'Estadisticas',
+        name: 'Revision Actas',
         icon: 'assessment',
-        sref: '.dashboard'
+        sref: '.revision'
       },
       {
-        name: 'Actas',
+        name: 'Modificacion Actas',
         icon: 'assignment',
         sref: '.transactions'
       },
       {
-        name: 'Instancias',
+        name: 'Creacion Actas',
         icon: 'view_module',
-        sref: '.table'
+        sref: '.teacher'
       }
     ];
 

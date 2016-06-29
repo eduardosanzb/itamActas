@@ -1,0 +1,79 @@
+<div  layout-gt-md="row">
+  <md-card class="animate-show" layout="row" layout-align="end center" ng-hide="true">
+    <button ng-click="vm.$showSource = !vm.$showSource">Cerrar</button>  
+  </md-card>
+  <span >
+    <md-card  id="charts_canvas" class="animate-show" ng-show="true" layout="row" layout-align="center center">
+    <section layout="row" layout-align="space-around center" layout-padding>
+        <!-- THIS ARE THE PLOTS OF GOOGLE CHART TO DOWNLOAD THE PNG, THATS WHY THEY ARE HIDED -->
+        <section>
+          <div id='chartP_div' ng-hide="true"></div>
+          <div id='chartNP_div' ng-hide="true"></div>
+        </section>
+        <div>
+          <canvas id="pie" class="chart chart-pie"
+            chart-data="dataP" chart-labels="labels" chart-options="options" chart-colors="colors">
+          </canvas>
+          <h4 class="md-flex">Aprobados/Reprobados NP</h2> 
+        </div>
+        
+        <div>
+          <canvas id="pie" class="chart chart-pie"
+            chart-data="dataNP" chart-labels="labels" chart-options="options">
+          </canvas>
+          <h4 class="md-flex">Aprobados/Reprobados Total</h2> 
+        </div>
+    </section>
+    <!-- <section layout="row" layout-align="end end">
+      <md-button ng-click="vm.$showSource = !vm.$showSource" class="flat" aria-label="toggle charts">content</md-button>
+    </section> -->
+</md-card>
+  </span>
+  
+  <md-card>
+      <div layout="row" layout-xs="column">
+          <md-toobar flex="20" style="margin:0px" >
+            
+            <md-input-container style="margin:15px;">
+                <label>Buscar</label>
+                <input type="text" ng-model="vm.filter.search">
+            </md-input-container>
+          </md-toobar>
+    </div>
+    </md-card>
+  <md-card  layout-padding>
+    
+    <md-table-container>
+          <table md-table>
+            <thead md-head md-order="vm.query.order" >
+              <tr md-row>
+                <th md-column md-order-by="vm.tableData.id"><span>Clave Única</span></th>
+                <th md-column md-order-by="vm.tableData.name"><span>Nombre del Alumno</span></th>
+                <th md-column >
+                  <md-icon>format_list_numbered</md-icon>
+                  <span>Calificaciones</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody md-body>
+              <tr md-row md-select="vm.tableData"   ng-repeat="data in vm.tableData | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
+                <td md-cell>{{data.id}}</td>
+                <td md-cell>{{data.name}}</td>
+                <td md-cell>{{data.grade}} pts</td>
+              </tr>
+            </tbody>
+          </table>
+    </md-table-container>
+    <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
+    <section  layout="row" layout-align="end center" >
+          <md-button ng-click="vm.printPdf()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Rechazar Acta</md-tooltip><i class="material-icons">cancel</i></md-button>
+          <md-button ng-click="vm.previewPdf()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Ver Acta</md-tooltip><i class="material-icons">picture_as_pdf</i></md-button>
+          <md-button ng-click="vm.sendTransaction()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Validar Acta</md-tooltip><i class="material-icons">assignment_turned_in</i></md-button>
+    </section>
+    <section  layout="row" layout-align="end center" >
+          <md-button ng-click="vm.printPdf()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Rechazarr Acta</md-tooltip><i class="material-icons">cancel</i></md-button>
+          <md-button ng-click="vm.saveDraft()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Firmar Acta</md-tooltip><i class="material-icons">assignment_turned_in</i></md-button>
+    </section>
+</md-card>
+</div>
+
