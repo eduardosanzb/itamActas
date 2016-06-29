@@ -53,40 +53,57 @@
       console.log('Testing')
       
       
-      // $.ajax({
-      //       type: "GET",
-      //               url: "http://cloud.lucasianmexico.com:8585/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data",
-      //               crossDomain: true,
-      //               beforeSend: function(xhr) {
-      //               xhr.setRequestHeader('Authorization', 'Basic ' + btoa('admin:admin'))
-      //               },
-      //       dataType: "json",
-      //               contentType: "application/javascript",
-      //               error: function (json) {
-      //               alert("error");
-      //               },
-      //               success: function(json) {
-      //               alert("exito");
-      //               }
-      //       });
+     // $.ajax({
+     //        type: "GET",
+     //                url: "http://cloud.lucasianmexico.com:8585/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data",
+     //                crossDomain: true,
+     //                beforeSend: function(xhr) {
+     //                xhr.setRequestHeader('Authorization', 'Basic ' + btoa('admin:admin'))
+     //                },
+     //        dataType: "jsonp",
+     //                contentType: "application/json; charset=utf-8",
+     //                error: function (json) {
+     //                  console.log(json)
+     //                alert("error");
+     //                },
+     //                success: function(json) {
+     //                  console.log(json)
+     //                alert("exito");
+     //                }
+     //        });
+
+
       //$http.defaults.headers.common['Authorization'] = 'Basic ' + Base64.encode('admin' + ':' + 'admin');
       var cloud = "http://cloud.lucasianmexico.com:8585/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data"
-      var cloud2 = "http://cloud.lucasianmexico.com:8585/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data"
+      var cloud2 = "admin:admin@http://cloud.lucasianmexico.com:8585/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data"
       var tux = "http://192.168.1.98:8080/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data";
+      var str = "http://192.168.1.125:9002/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data"
       var req = {
           method: 'GET',
           url: cloud,
           headers:{
             'Content-type':'application/json; charset=utf-8'
             //'Authorization' : 'Basic ' + Base64.encode('admin' + ':' + 'admin')
-            }
+            },
+            dataType: "jsonp",
+            crossDomain: true,
+                    beforeSend: function(xhr) {
+                    xhr.setRequestHeader('Authorization', 'Basic ' + btoa('admin:admin'))
+                    }
         }
-      $http(req).success(function(response) {
+
+        $http.get(cloud).success(function(response) {
           console.log('HOla')
           console.log(response)
       }).catch(function(error){
           console.log(error)
       });
+      // $http(req).success(function(response) {
+      //     console.log('HOla')
+      //     console.log(response)
+      // }).catch(function(error){
+      //     console.log(error)
+      // });
 
 
 
