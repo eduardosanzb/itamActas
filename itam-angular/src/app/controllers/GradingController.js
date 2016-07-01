@@ -2,11 +2,11 @@
     angular
         .module('app')
         .controller('GradingController', [
-            '$stateParams','studentService', '$mdEditDialog','$rootScope','$state',
+            '$stateParams', '$mdEditDialog','$rootScope','$state','$localStorage', 'tasksService',
             GradingController
         ]);
 
-    function GradingController($stateParams, studentService, $mdEditDialog, $rootScope, $state) {
+    function GradingController($stateParams, $mdEditDialog, $rootScope, $state, $localStorage, tasksService) {
     /*  Template:   app/views/partials/grading.html
      *  $state:     home.grading
      *  - Variables
@@ -28,7 +28,7 @@
           vm.limitOptions = [5, 10, 15];
           vm.filter = {}
           vm.query = {
-              order: 'studentId',
+              order: 'claveUnica',
               limit: 5,
               page: 1
           };
@@ -48,12 +48,7 @@
           vm.printPdf = printPdf;
           vm.sendTransaction = sendTransaction;
         /*SERVICES AND DATA API*/
-            studentService
-              .loadAllItems()
-              .then(function(tableData) {
-                vm.tableData = [].concat(tableData);
-                //console.log(vm.tableData);
-              });
+            vm.tableData = $localStorage.getObject($stateParams.transactionId);
         /*FUNCTIONS STRUCTURES*/
           function editGrade (event, student) {
             /*  This function is an append of the component github. 
@@ -67,10 +62,10 @@
               event.stopPropagation(); // in case autoselect is enabled
               
               var editDialog = {
-                modelValue: student.comment,
+                modelValue: student.calificacion,
                 placeholder: 'Agrega la Calificacion',
                 save: function (input) { /*THIS IS THE MAIN FOCUS PART*/
-                  student.grade = input.$modelValue;
+                  student.calificacion = input.$modelValue;
                 },
                 targetEvent: event,
                 title: 'Agrega la Calificacion',
@@ -99,7 +94,25 @@
              *  2. 
              *  3. Go back to the last function
              */
-              //console.log($rootScope.previousState);
+             var newGrades = angular.toJson(vm.tableData.alumnos,true);
+             var variables = {
+                              "action" : "complete",
+                              "variables" : [
+                                  {
+                                    "name":"approveProf",
+                                    "type":"string",
+                                    "value":"false",
+                                    "scope":"global"
+                                },
+                                {
+                                    "name" : "alumnos",
+                                    "scope" : "global",
+                                    "type" : "string",
+                                    "value" : newGrades
+                                }
+                              ]
+                            }
+              tasksService.release(vm.tableData.taskId,variables)
               $state.go($rootScope.previousState);
           }
           function printPdf() {
@@ -118,7 +131,26 @@
              *  2. 
              *  3. Go back to the last function
              */
-              console.log("Starting the transaction sender");
+             var newGrades = angular.toJson(vm.tableData.alumnos,true);
+             var variables = {
+                              "action" : "complete",
+                              "variables" : [
+                                  {
+                                    "name":"approveProf",
+                                    "type":"string",
+                                    "value":"true",
+                                    "scope":"global"
+                                },
+                                {
+                                    "name" : "alumnos",
+                                    "scope" : "global",
+                                    "type" : "string",
+                                    "value" : newGrades
+                                }
+                              ]
+                            }
+              tasksService.release(vm.tableData.taskId,variables)
+              $state.go($rootScope.previousState);
           }
 
        

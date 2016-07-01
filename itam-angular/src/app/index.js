@@ -2,7 +2,7 @@
 
 angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
   'ngSanitize', 'ui.router', 'ngMaterial', 'nvd3', 'app', 'md.data.table',
-  'mdDataTable','chart.js','googlechart'])
+  'mdDataTable','chart.js','googlechart', 'ngResource'])
 
   .run(function($rootScope){
     $rootScope.$on('$stateChangeSuccess', function(event, to, toParams, from, fromParams){
@@ -13,8 +13,9 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
  
 
   .config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider,
-                    $mdIconProvider, ChartJsProvider, $httpProvider) {
+                    $mdIconProvider, ChartJsProvider, $httpProvider, $resourceProvider) {
 
+    //$resourceProvider.defaults.stripTrailingSlashes = false;
      //$httpProvider.defaults.withCredentials = true;
      // $httpProvider.defaults.useXDomain = true;
      // delete $httpProvider.defaults.headers.common['X-Requested-With'];
@@ -80,6 +81,7 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
           title: 'Table Teacher'
         }
       });
+
 
     $urlRouterProvider.otherwise('/login');
 

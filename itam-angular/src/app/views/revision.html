@@ -1,14 +1,16 @@
 <md-content layout-padding layout-wrap>
-  <div ng-click="vm.test()">test</div>
     <md-table-container>
-      <div layout="row" layout-align="end center" layout-xs="column">
-                <md-toobar flex="20" style="margin:0px" >
-                  <md-input-container style="margin:15px;">
-                      <label>Buscar</label>
-                      <input type="text" ng-model="vm.filter.search">
-                  </md-input-container>
-                </md-toobar>
+      <md-toobar  layout="row" layout-align="space-between end" style="margin:0px" >
+            <div>
+              <md-input-container style="margin:15px;">
+                  <label>Buscar</label>
+                  <input type="text" ng-model="vm.filter.search">
+              </md-input-container>
             </div>
+             <div>
+              <md-button  ng-click="vm.refreshTasks()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Recargar Actas</md-tooltip><i class="material-icons">refresh</i></md-button>
+            </div>
+        </md-toobar>
           <table md-table>
             <thead md-head md-order="vm.query.order" >
               <tr md-row>
@@ -36,5 +38,6 @@
           </table>
         </md-table-container>
         <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
+   
 </md-content>
 

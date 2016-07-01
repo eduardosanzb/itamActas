@@ -32,8 +32,7 @@
 
     return {
       loadAllItems : function() {
-        $http.defaults.headers.common['Authorization'] = 
-           'Basic ' + 'admin:admin';
+        
         $http({
           method: 'GET',
           //url: 'http://profesor1:welcome1@192.168.1.98:8080/activiti-rest/service/runtime/tasks?assignee=profesor1'

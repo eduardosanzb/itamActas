@@ -3,11 +3,11 @@
   angular
     .module('app')
     .controller('TransactionsController', [
-      'tableService', '$scope', 'actasProfesorService', '$state',
+       '$scope', '$state', 'tasksService', '$http', '$localStorage', '$timeout',
       TransactionsController
     ]);
 
-  function TransactionsController(tableService, $scope, actasProfesorService, $state) {
+  function TransactionsController( $scope, $state, tasksService, $http, $localStorage, $timeout) {
     /*  Template:   app/views/transactions.html
      *  $state:     home.transactions
      *  - Variables
@@ -41,26 +41,62 @@
       }
     /*FUNCTIONS BINDING*/
       vm.startTransaction = startTransaction;
+      vm.refreshTasks = refreshTasks;
     /*SERVICES AND DATA API*/
-    console.log(actasProfesorService.loadAllItems())
-      tableService
-      .loadAllItems()
-      .then(function(tableData) {
-        vm.tableData = [].concat(tableData);
-        console.log(vm.tableData);
-      });
+      refreshTasks();
 
     /*FUNCTIONS STRUCTURES*/
-      function startTransaction(transactionId){
+      function refreshTasks(){
+        vm.promise = tasksService.all("profesor1").$promise;
+        vm.actas = [];
+        tasksService.all("profesor1").$promise.then(function(data){
+          data.data.forEach( function(task) {
+            var id = task.id;
+            tasksService.variables(id).$promise.then(function(data){
+              var object = data.reduce(function(o, v, i) {
+                    if(v.value.charAt(0) == '[')
+                      o[v.name] = JSON.parse(v.value);  
+                    else
+                      o[v.name] = v.value;
+                    return o;
+                  }, {});
+              object.taskId = id;
+              vm.actas.push(object);
+            });
+            //return actas;
+          });
+        })
+      }
+      function startTransaction(transaction){
         /*  
          *  Strategy:
          *  1. Log the id
          *  2. Go to the state of grading with the transaction id as
          *    a parameter.
          */
-        console.log("Starting to grade the transaction id: " + transactionId);
-        $state.go('home.grading',{transactionId:transactionId});
+         console.log(transaction.taskId)
+        $localStorage.setObject(transaction.taskId,transaction)
+        $state.go('home.grading',{transactionId:transaction.taskId});
       }
+
+
+
+      
+
+
+
+     
+      
+
+     
+      
+
+
+
+
+     
+
+      
 
     
   }

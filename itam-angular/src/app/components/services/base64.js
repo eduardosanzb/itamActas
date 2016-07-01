@@ -1,4 +1,10 @@
-angular.module('app').factory('Base64', function() {
+(function(){
+    'use strict';
+    angular.module('app')
+            .service('Base64', [ 
+            Base64
+    ]);
+    function Base64 () {
     var keyStr = 'ABCDEFGHIJKLMNOP' +
             'QRSTUVWXYZabcdef' +
             'ghijklmnopqrstuv' +
@@ -81,4 +87,9 @@ angular.module('app').factory('Base64', function() {
             return output;
         }
     };
-});
+    }
+  })();
+
+
+
+

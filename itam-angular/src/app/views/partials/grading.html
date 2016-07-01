@@ -11,8 +11,8 @@
           <table md-table>
             <thead md-head md-order="vm.query.order" >
               <tr md-row>
-                <th md-column md-order-by="vm.tableData.id"><span>Clave Única</span></th>
-                <th md-column md-order-by="vm.tableData.name"><span>Nombre del Alumno</span></th>
+                <th md-column md-order-by="vm.tableData.alumnos.claveUnica"><span>Clave Única</span></th>
+                <th md-column md-order-by="vm.tableData.alumnos.nombre"><span>Nombre del Alumno</span></th>
                 <th md-column >
                   <md-icon>format_list_numbered</md-icon>
                   <span>Calificar</span>
@@ -24,11 +24,11 @@
               </tr>
             </thead>
             <tbody md-body>
-              <tr md-row md-select="vm.tableData"   ng-repeat="data in vm.tableData | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
-                <td md-cell>{{data.id}}</td>
-                <td md-cell>{{data.name}}</td>
-                <td md-cell ng-click="vm.editGrade($event, data)" ng-class="{'md-placeholder': !data.grade}">
-                  {{data.grade || 'Agrega la Calificacion'}}
+              <tr md-row md-select="vm.tableData"   ng-repeat="data in vm.tableData.alumnos | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
+                <td md-cell>{{data.claveUnica}}</td>
+                <td md-cell>{{data.nombre}}</td>
+                <td md-cell ng-click="vm.editGrade($event, data)" ng-class="{'md-placeholder': !data.calificacion}">
+                  {{data.calificacion || 'Agrega la Calificacion'}}
                 </td>
                 <!-- <td md-cell ng-click="vm.editComment($event, data)" ng-class="{'md-placeholder': !data.comment}">
                   {{data.comment || 'Agrega un Comentario'}}

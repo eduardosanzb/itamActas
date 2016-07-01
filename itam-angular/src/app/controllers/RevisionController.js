@@ -3,10 +3,10 @@
   angular
     .module('app')
     .controller('RevisionController', 
-      ['$state', 'tableService', '$http', 'Base64',
+      ['$state', 'tasksService', '$http', 'Base64','studentService',
       RevisionController]);
 
-  function RevisionController($state, tableService,  $http, Base64) {
+  function RevisionController($state, tasksService,  $http, Base64, studentService) {
     /*  Template:   app/views/revision.html
      *  $state:     home.revision
      *  - Variables
@@ -39,126 +39,51 @@
         pageSelect: true
       }
     /*FUNCTIONS BINDING*/
-    vm.startRevision = startRevision;
+     vm.startRevision = startRevision;
+     vm.refreshTasks = refreshTasks;
     /*SERVICES AND DATA API*/
-      tableService
-        .loadAllItems()
-        .then(function(tableData) {
-          vm.tableData = [].concat(tableData);
-          //console.log(vm.tableData);
-        });
-
+     //refreshTasks();
+     studentService.loadAllItems().then(function(data){
+      console.log(data)
+      vm.tableData = data;
+     })
       
-      vm.test = function(){
-      console.log('Testing')
-      
-      
-     // $.ajax({
-     //        type: "GET",
-     //                url: "http://cloud.lucasianmexico.com:8585/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data",
-     //                crossDomain: true,
-     //                beforeSend: function(xhr) {
-     //                xhr.setRequestHeader('Authorization', 'Basic ' + btoa('admin:admin'))
-     //                },
-     //        dataType: "jsonp",
-     //                contentType: "application/json; charset=utf-8",
-     //                error: function (json) {
-     //                  console.log(json)
-     //                alert("error");
-     //                },
-     //                success: function(json) {
-     //                  console.log(json)
-     //                alert("exito");
-     //                }
-     //        });
+    
 
-
-      //$http.defaults.headers.common['Authorization'] = 'Basic ' + Base64.encode('admin' + ':' + 'admin');
-      var cloud = "http://cloud.lucasianmexico.com:8585/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data"
-      var cloud2 = "admin:admin@http://cloud.lucasianmexico.com:8585/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data"
-      var tux = "http://192.168.1.98:8080/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data";
-      var str = "http://192.168.1.125:9002/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data"
-      var req = {
-          method: 'GET',
-          url: cloud,
-          headers:{
-            'Content-type':'application/json; charset=utf-8'
-            //'Authorization' : 'Basic ' + Base64.encode('admin' + ':' + 'admin')
-            },
-            dataType: "jsonp",
-            crossDomain: true,
-                    beforeSend: function(xhr) {
-                    xhr.setRequestHeader('Authorization', 'Basic ' + btoa('admin:admin'))
-                    }
-        }
-
-        $http.get(cloud).success(function(response) {
-          console.log('HOla')
-          console.log(response)
-      }).catch(function(error){
-          console.log(error)
-      });
-      // $http(req).success(function(response) {
-      //     console.log('HOla')
-      //     console.log(response)
-      // }).catch(function(error){
-      //     console.log(error)
-      // });
-
-
-
-
-      // $http({method: 'GET', url: 'http://cloud.lucasianmexico.com:8585/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data',
-      //       headers:{
-      //         'Cache-Control': 'no-cache, no-store, max-age=0, must-revalidate',
-      //         'Content-Type':' application/json',
-              
-      //         'X-Content-Type-Options': 'nosniff',
-      //         'X-Frame-Options': 'DENY',
-      //         'X-XSS-Protection': '1; mode=block'
-      //       } }).
-      //       success(function(data, status, headers, config) {
-      //           console.log(data)
-      //           // this callback will be called asynchronously
-      //           // when the response is available
-      //       }).
-      //       error(function(data, status, headers, config) {
-      //           console.log("error angular")
-      //           console.log(data)
-      //           console.log(status)
-      //           console.log(headers)
-      //           console.log(config)
-      //           // called asynchronously if an error occurs
-      //           // or server returns response with an error status.
-      //       });
-
-      }
-
-      // $http.get('http://cloud.lucasianmexico.com:8585/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data')
-      // .success(function(data){
-      //   console.log(data)
-      // }).catch(function(data){
-      //   console.log(data)
-      // });
-
-      // $http.get('http://cloud.lucasianmexico.com:8585/activiti-rest/service/management/tables/ACT_ID_MEMBERSHIP/data')
-      // .success(function(data){
-      //   console.log(data)
-      // }).catch(function(data){
-      //   console.log(data)
-      // });
-      // $http.get('http://rest-service.guides.spring.io/greeting').
-      //   success(function(data) {
-      //      console.log(data)
-      //   });
+     
 
 
     /*FUNCTIONS STRUCTURES*/
       function startRevision(transactionId) {
         console.log("We are going to review the transaction");
+        console.log(vm.actas)
         $state.go('home.statistics',{transactionId:transactionId});
       }
-
+      function refreshTasks(){
+        vm.promise = tasksService.all("jefeDepartamento1").$promise;
+        vm.actas = [];
+        tasksService.all("jefeDepartamento1").$promise.then(function(data){
+          data.data.forEach( function(task) {
+            var id = task.id;
+            tasksService.variables(id).$promise.then(function(data){
+              console.log(data)
+              var object = data.reduce(function(o, v, i) {
+                console.log(o)
+                console.log(v)
+                console.log(i)
+                    if(v.value.charAt(0) == '[')
+                      o[v.name] = JSON.parse(v.value);  
+                    else
+                      o[v.name] = v.value;
+                    return o;
+                  }, {});
+              object.taskId = id;
+              vm.actas.push(object);
+            });
+            //return actas;
+          });
+        })
+      }
     
 
     

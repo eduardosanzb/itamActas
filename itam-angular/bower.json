@@ -21,7 +21,8 @@
     "angular-chart.js": "^0.10.2",
     "angular-google-chart": "0.1.0",
     "html2canvas": "^0.4.1",
-    "canvas2image": "*"
+    "canvas2image": "*",
+    "angular-resource": "^1.5.7"
   },
   "devDependencies": {}
 }
