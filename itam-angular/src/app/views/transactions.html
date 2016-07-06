@@ -8,7 +8,7 @@
               </md-input-container>
             </div>
              <div>
-              <md-button  ng-click="vm.refreshTasks()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Recargar las Actas</md-tooltip><i class="material-icons">refresh</i></md-button>
+              <md-button  ng-click="vm.refreshTasks()"  class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Recargar las Actas</md-tooltip><i class="material-icons">refresh</i></md-button>
             </div>
     </md-toobar>
           <table md-table md-progress="vm.promise" >
@@ -27,12 +27,19 @@
                 <td md-cell>{{acta.claveMateria}}</td>
                 <td md-cell>{{acta.grupo}}</td>
                 <td md-cell>{{acta.tituloMateria}}</td>
-                <td md-cell><md-button ng-click="vm.startTransaction(acta)"
+                <td md-cell layout="col">
+                  <md-button ng-click="vm.startTransaction(acta)"
                              ng-disabled="false"
                              aria-label="inspections"
                              class="md-icon-button launch md-raised" >
                     <i class="material-icons">search</i>
-                  </md-button></td>
+                  </md-button>
+                  <md-button ng-if="acta.comentarios" ng-click="vm.showComments($event, acta)">
+                    <md-tooltip md-direction="bottom">Tienes {{acta.comentarios.length || '0'}} comentarios</md-tooltip>
+                    <i  class="material-icons md-primary" 
+                        ng-style="{'color':'rgb(0,150,136)','font-size':'18px'}">mode_comment</i></td>
+                  </md-button>
+                  
               </tr>
             </tbody>
           </table>

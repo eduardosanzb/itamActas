@@ -29,7 +29,7 @@
             <tbody md-body>
               <tr md-row md-select="data"  md-auto-select="vm.options.autoSelect"  ng-repeat="data in vm.tableData | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
                 <td md-cell>{{data.SWBGRUP_CRN}}</td>
-                <td md-cell>{{data.SWBGRUP_CRSE_NUMB}}</td>
+                <td md-cell>{{data.SWBGRUP_SEQ_NUMB}}</td>
                 <td md-cell>{{data.SWBGRUP_TITLE}}</td>
                 <td md-cell>{{data.SWBGRUP_PROF_NAME}}</td>
                 <td md-cell>{{data.SWBGRUP_JEFE_DEP_NAME}}</td>

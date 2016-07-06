@@ -3,11 +3,11 @@
   angular
     .module('app')
     .controller('AdminController', [
-      'instanceService', '$mdDialog','adminService',
+      'instanceService', '$mdDialog','adminService','processService',
       AdminController
     ]);
 
-  function AdminController(instanceService, $mdDialog, adminService) {
+  function AdminController(instanceService, $mdDialog, adminService, processService) {
         /*  Template:   app/views/table-teacher.html
          *  $state:     home.grading
          *  - Variables
@@ -33,7 +33,7 @@
           vm.options = {
                 rowSelection: true,
                 multiSelect: true,
-                autoSelect: false,
+                autoSelect: true,
                 decapitate: false,
                 largeEditDialog: false,
                 boundaryLinks: true,
@@ -48,7 +48,7 @@
             
         /*FUNCTIONS STRUCTURES*/
           function getTransactions(){
-            vm.promise = adminService.get().$promise.then(function(data){
+            vm.promise = adminService.getTransactions().get().$promise.then(function(data){
               vm.tableData = data.usuariosSrie;
               console.log(data.usuariosSrie)
             });
@@ -69,7 +69,34 @@
               .cancel('Cancelar');
               $mdDialog.show(confirm).then(function() {
                   console.log('Confirmando las Actas');
-                  //TODO what u have to do with the confirmaction
+                  console.log(vm.selected)
+                  angular.forEach(vm.selected, function(task){
+                    var newInstance = {
+                      "processDefinitionKey":"itamActasProcess",
+                      "variables": [
+                        {
+                          "name":"swbgrupTermCode",
+                          "value":task.SWBGRUP_TERM_CODE
+                        },
+                        {
+                          "name":"swbgrupCrn",
+                          "value":task.SWBGRUP_CRN
+                        },
+                        {
+                          "name":"comentarios",
+                          "value":null
+                        }
+                      ]
+                    }
+                    var oldTransaction = {
+                      "swbgrupTermCode":task.SWBGRUP_TERM_CODE,
+                      "swbgrupCrn":task.SWBGRUP_CRN
+                    }
+                    processService.resolve(newInstance).$promise.then(function(){
+                    adminService.releaseTransaction(oldTransaction).then(getTransactions);
+
+                    });
+                  }); //forEach
                 }, function() {
                   console.log('No estuvo seguro');
                 });

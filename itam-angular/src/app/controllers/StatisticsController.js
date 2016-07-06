@@ -3,10 +3,12 @@
   angular
     .module('app')
     .controller('StatisticsController', 
-      ['$state', '$scope', '$rootScope', 'tasksService','googleChartApiPromise','$stateParams', '$localStorage',
+      ['$state', '$scope', '$rootScope', 'tasksService','googleChartApiPromise',
+       '$stateParams', '$localStorage', '$mdDialog',
       StatisticsController]);
 
-  function StatisticsController($state, $scope, $rootScope, tasksService,googleChartApiPromise, $stateParams, $localStorage) {
+  function StatisticsController($state, $scope, $rootScope, tasksService, googleChartApiPromise, 
+                                $stateParams, $localStorage, $mdDialog) {
     /*  Template:   app/views/statistics.html
      *  $state:     home.statistics
      *  - Variables
@@ -37,7 +39,7 @@
         10:0
       }
       vm.limitOptions = [5, 10, 15];
-      vm.role = $rootScope.groups.indexOf("direccion"); // 0 == true ; -1 == false
+      vm.role = $localStorage.getObject('groups').indexOf("direccion"); // 0 == true ; -1 == false
       vm.filter = {}
       vm.query = {
           order: 'studentId',
@@ -62,9 +64,7 @@
       $scope.labelNa = ["6","7","8","9","10"];
       $scope.labelAll = ["6", "7","8","9","10","NA" ];
       $scope.series = ['Calificación'];
-      
-      
-
+ 
 
     /*FUNCTIONS BINDING*/
       vm.signTransaction = signTransaction;
@@ -74,31 +74,8 @@
     /*SERVICES AND DATA API*/
       //Get the data for the table form the $LocalStorage
       calculationForGraphs();      
-      function calculationForGraphs(){
-        var students = $localStorage.getObject($stateParams.transactionId).alumnos;
-        students.forEach( function(student) {
-          if(student.calificacion && student.calificacion > 6){
-            vm.okStudents++;
-
-            vm.avgExclusive += parseFloat(student.calificacion.replace(",", "."));
-            vm.avgInclusive += parseFloat(student.calificacion.replace(",", "."));
-            vm.grades[student.calificacion]++;
-          } else {
-            vm.grades.na++;
-            vm.avgInclusive = (student.calificacion)? vm.avgExclusive+parseFloat(student.calificacion.replace(",", ".")) : vm.avgExclusive;
-          }
-        });
-        angular.forEach(vm.grades, function(value, key){
-          if(key != 'na'){
-            vm.data.withoutNa[0].push(value);
-            vm.data.all[0].push(value);
-          } else {
-            vm.data.all[0].push(value);
-          }
-        })
-        console.log(vm.grades)
-        vm.tableData = $localStorage.getObject($stateParams.transactionId);
-      }
+      vm.tableData = $localStorage.getObject($stateParams.transactionId);
+      
       googleChartApiPromise.then(function(data){
         /*  This is a Promise for the Google charts API, then we can create the chart/png
          *  Strategy:
@@ -152,6 +129,29 @@
           //chartNP.draw(dataNP, optionsNP);
         });
     /*FUNCTIONS STRUCTURES*/
+      function calculationForGraphs(){
+        var students = $localStorage.getObject($stateParams.transactionId).alumnos;
+        students.forEach( function(student) {
+          if(student.calificacion && student.calificacion > 6){
+            vm.okStudents++;
+
+            vm.avgExclusive += parseFloat(student.calificacion.replace(",", "."));
+            vm.avgInclusive += parseFloat(student.calificacion.replace(",", "."));
+            vm.grades[student.calificacion]++;
+          } else {
+            vm.grades.na++;
+            vm.avgInclusive = (student.calificacion)? vm.avgExclusive+parseFloat(student.calificacion.replace(",", ".")) : vm.avgExclusive;
+          }
+        });
+        angular.forEach(vm.grades, function(value, key){
+          if(key != 'na'){
+            vm.data.withoutNa[0].push(value);
+            vm.data.all[0].push(value);
+          } else {
+            vm.data.all[0].push(value);
+          }
+        })
+      }
       //Functions of the Director
       function signTransaction(){
         /*  Strategy:
@@ -176,7 +176,7 @@
         $localStorage.setObject($stateParams.transactionId, null);
         $state.go($rootScope.previousState);
       }
-      function rejectToJefe(){
+      function rejectToJefe(ev){
         /*  Strategy:
          *  1. Get the If from the stateparams
          *  2. Create the checkout object
@@ -184,21 +184,65 @@
          *  4. Clear the $localStorage
          *  5. Go back previous state
          */
-         var checkoutObject = {
-              "action" : "complete",
-              "variables" : [
-                  {
-                      "name":"approveDG",
-                      "type":"string",
-                      "value":"false",
-                      "scope":"global"
-                  }
-              ]
-          }
-        tasksService.release($stateParams.transactionId,checkoutObject);
-        $localStorage.setObject($stateParams.transactionId, null);
-        $state.go($rootScope.previousState);
+          var confirm = $mdDialog.prompt()
+            .title('¿Estas Seguro de Rechazar el Acta?')
+            .textContent('¿Algún Comentario?')
+            .placeholder('Comentario')
+            .ariaLabel('Comentario')
+            .targetEvent(ev)
+            .ok('Rechazar')
+            .cancel('Cancelar');
+          $mdDialog.show(confirm).then(function(result) {
+            var newComment = {
+                value: result,
+                timestamp: Date.now()
+              }
+            vm.tableData.comentarios = (vm.tableData.comentarios) ? vm.tableData.comentarios.concat(newComment) :[].concat(newComment);
+            console.log(JSON.stringify(vm.tableData.comentarios))
+            var checkoutObject = {
+                "action" : "complete",
+                "variables" : [
+                    {
+                        "name":"approveDG",
+                        "type":"string",
+                        "value":"false",
+                        "scope":"global"
+                    },
+                    {
+                        "name":"comentarios",
+                        "value":JSON.stringify(vm.tableData.comentarios)
+                    }
+                ]
+            }
+            tasksService.release($stateParams.transactionId,checkoutObject);
+            $localStorage.setObject($stateParams.transactionId, null);
+            $state.go($rootScope.previousState);
+          }, function() {
+          });
       }
+      // function rejectToJefe(){
+      //   /*  Strategy:
+      //    *  1. Get the If from the stateparams
+      //    *  2. Create the checkout object
+      //    *  3. Make the POST to the service
+      //    *  4. Clear the $localStorage
+      //    *  5. Go back previous state
+      //    */
+      //    var checkoutObject = {
+      //         "action" : "complete",
+      //         "variables" : [
+      //             {
+      //                 "name":"approveDG",
+      //                 "type":"string",
+      //                 "value":"false",
+      //                 "scope":"global"
+      //             }
+      //         ]
+      //     }
+      //   tasksService.release($stateParams.transactionId,checkoutObject);
+      //   $localStorage.setObject($stateParams.transactionId, null);
+      //   $state.go($rootScope.previousState);
+      // }
       function previewPdf(){}
 
       //Function of the Jefe Departamento
@@ -225,7 +269,7 @@
         $localStorage.setObject($stateParams.transactionId, null);
         $state.go($rootScope.previousState);
       }
-      function rejectToProfessor(){
+      function rejectToProfessor(ev){
         /*  Strategy:
          *  1. Get the If from the stateparams
          *  2. Create the checkout object
@@ -233,22 +277,46 @@
          *  4. Clear the $localStorage
          *  5. Go back previous state
          */
-         var checkoutObject = {
-              "action" : "complete",
-              "variables" : [
-                  {
-                      "name":"approveJD",
-                      "type":"string",
-                      "value":"false",
-                      "scope":"global"
-                  }
-              ]
-          }
-        tasksService.release($stateParams.transactionId,checkoutObject);
-        $localStorage.setObject($stateParams.transactionId, null);
-        $state.go($rootScope.previousState);
+          var confirm = $mdDialog.prompt()
+            .title('¿Estas Seguro de Rechazar el Acta?')
+            .textContent('¿Algún Comentario?')
+            .placeholder('Comentario')
+            .ariaLabel('Comentario')
+            .targetEvent(ev)
+            .ok('Rechazar')
+            .cancel('Cancelar');
+          $mdDialog.show(confirm).then(function(result) {
+            var newComment = {
+                value: result,
+                timestamp: Date.now()
+              }
+            vm.tableData.comentarios = (vm.tableData.comentarios) ? vm.tableData.comentarios.concat(newComment) :[].concat(newComment);
+            console.log(JSON.stringify(vm.tableData.comentarios))
+            var checkoutObject = {
+                "action" : "complete",
+                "variables" : [
+                    {
+                        "name":"approveJD",
+                        "type":"string",
+                        "value":"false",
+                        "scope":"global"
+                    },
+                    {
+                        "name":"comentarios",
+                        "value":JSON.stringify(vm.tableData.comentarios)
+                    }
+                ]
+            }
+            tasksService.release($stateParams.transactionId,checkoutObject);
+            $localStorage.setObject($stateParams.transactionId, null);
+            $state.go($rootScope.previousState);
+          }, function() {
+          });
       }
-    
+      function openDialog(ev){
+        // Appending dialog to document.body to cover sidenav in docs app
+        
+      }
 
     
 

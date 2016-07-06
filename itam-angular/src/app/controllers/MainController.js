@@ -5,13 +5,13 @@
        .controller('MainController', [
           'navService', '$mdSidenav', '$mdBottomSheet', 
           '$log', '$q', '$state', '$mdToast','$mdMedia',
-          '$rootScope',
+          '$rootScope', '$localStorage',
           MainController
        ]);
 
   function MainController(navService, $mdSidenav, $mdBottomSheet,
                           $log, $q, $state, $mdToast, $mdMedia,
-                          $rootScope) {
+                          $rootScope, $localStorage) {
     /*  COMPLETETemplate:   app/views/transactions.html
      *  $state:     home.transactions
      *  - Variables
@@ -36,12 +36,13 @@
     vm.toggleRightSidebar = toggleRightSidebar;
     vm.$mdMedia = $mdMedia;
     vm.logo = 'assets/images/itamtransparente.png'
+    vm.name = $localStorage.get('name');
 
     navService
       .loadAllItems()
       .then(function(menuItems) {
         menuItems.forEach( function(group) {
-           $rootScope.groups.forEach( function(role) {
+        $localStorage.getObject('groups').forEach( function(role) {
           if(group[role]){
             vm.menuItems.push(group);
           }

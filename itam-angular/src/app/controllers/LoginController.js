@@ -3,10 +3,10 @@
   angular
     .module('app')
     .controller('LoginController', 
-      ['$state', '$rootScope','loginService', 'groupService','$mdToast',
+      ['$state', '$rootScope','loginService', 'groupService','$mdToast', '$localStorage',
       LoginController]);
 
-  function LoginController($state, $rootScope, loginService, groupService, $mdToast) {
+  function LoginController($state, $rootScope, loginService, groupService, $mdToast, $localStorage) {
     /*  COMPLETETemplate:   app/views/transactions.html
      *  $state:     home.transactions
      *  - Variables
@@ -35,24 +35,34 @@
        */
        loginService.auth(vm.credentials)
        .$promise.then(function(userData){
-        console.log(userData)
+        $localStorage.set('name', userData.firstName + " " +userData.lastName);
         $rootScope.userName = userData.firstName + " " +userData.lastName;
         //We have the data of the user, now we have to identify
         // which groups he is part of.
         groupService.get().$promise.then(function(groups){
+          $localStorage.setObject('auth',vm.credentials);
           $rootScope.auth = vm.credentials;
-            groups.data.forEach( function(member) {
-              if(userData.id === member.USER_ID_){
-                if(!$rootScope.groups)
-                  $rootScope.groups = []
-                $rootScope.groups.push(member.GROUP_ID_);
-              } 
-            });
-            if($rootScope.groups.indexOf("jefesDepartamentos")==0 || $rootScope.groups.indexOf("direccion")==0)
+          var roles = [];
+          groups.data.forEach( function(member) {
+            if(userData.id === member.USER_ID_){
+              console.log(member.GROUP_ID_)
+              roles.push(member.GROUP_ID_);
+              $localStorage.setObject('groups', roles);
+              console.log(roles)
+            } 
+            
+          });
+            // if($rootScope.groups.indexOf("jefesDepartamentos")==0 || $rootScope.groups.indexOf("direccion")==0)
+            //   $state.go('home.revision');
+            // if($rootScope.groups.indexOf("admin")==0)
+            //   $state.go('home.admin');
+            // if($rootScope.groups.indexOf("profesores")==0)
+            //   $state.go('home.transactions');
+            if($localStorage.getObject('groups').indexOf("jefesDepartamentos")==0 || $localStorage.getObject('groups').indexOf("direccion")==0)
               $state.go('home.revision');
-            if($rootScope.groups.indexOf("admin")==0)
+            if($localStorage.getObject('groups').indexOf("admin")==0)
               $state.go('home.admin');
-            if($rootScope.groups.indexOf("profesores")==0)
+            if($localStorage.getObject('groups').indexOf("profesores")==0)
               $state.go('home.transactions');
         });
       }).catch(function(error){

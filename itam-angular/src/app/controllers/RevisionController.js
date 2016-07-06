@@ -5,13 +5,13 @@
     .controller('RevisionController', 
       ['$state', 'tasksService', '$http',
        'Base64','studentService', '$localStorage',
-       '$rootScope',
+       '$rootScope','$mdDialog',
       RevisionController]);
 
   function RevisionController($state, tasksService,  
                               $http, Base64, 
                               studentService, $localStorage, 
-                              $rootScope) {
+                              $rootScope, $mdDialog) {
     /*  Template:   app/views/revision.html
      *  $state:     home.revision
      *  - Variables
@@ -46,6 +46,7 @@
     /*FUNCTIONS BINDING*/
      vm.startRevision = startRevision;
      vm.refreshTasks = refreshTasks;
+     vm.showComments = showComments;
     /*SERVICES AND DATA API*/
      refreshTasks();
 
@@ -57,9 +58,10 @@
         $state.go('home.statistics',{transactionId:transaction.taskId});
       }
       function refreshTasks(){
+        var credentials = $localStorage.getObject('auth');
         vm.actas = [];
-        vm.promise = tasksService.all($rootScope.auth.userId).$promise;
-        tasksService.all($rootScope.auth.userId).$promise.then(function(data){
+        vm.promise = tasksService.all(credentials.userId).$promise;
+        tasksService.all(credentials.userId).$promise.then(function(data){
           data.data.forEach( function(task) {
             if(task.taskDefinitionKey == "departamentoTask" || task.taskDefinitionKey == "direccionTask"){
               var id = task.id;
@@ -74,11 +76,35 @@
                       return o;
                     }, {});
                 object.taskId = id;
+                console.log(object)
                 vm.actas.push(object);
               });
             }
           });
         })
+      }
+      function showComments(ev,acta){
+        $mdDialog.show({
+          controller: DialogController,
+          templateUrl: 'app/views/partials/comments.html',
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose: true,
+          escapeToClose:true,
+          fullscreeen: true,
+          locals: {
+            acta: acta
+          }
+        }).then(function(answer){
+          console.log("ok")
+        });
+      }
+      function DialogController($scope, $mdDialog, acta){
+        console.log(acta)
+        $scope.comments = acta.comentarios;
+        $scope.hide = function() {
+          $mdDialog.hide();
+        }
       }
       
     

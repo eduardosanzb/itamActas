@@ -3,11 +3,13 @@
   angular
     .module('app')
     .controller('TransactionsController', [
-       '$scope', '$state', 'tasksService', '$http', '$localStorage', '$timeout','$rootScope',
+       '$scope', '$state', 'tasksService', '$http', 
+       '$localStorage', '$timeout','$rootScope',
+       '$mdDialog',
       TransactionsController
     ]);
 
-  function TransactionsController( $scope, $state, tasksService, $http, $localStorage, $timeout, $rootScope) {
+  function TransactionsController( $scope, $state, tasksService, $http, $localStorage, $timeout, $rootScope, $mdDialog) {
     /*  Template:   app/views/transactions.html
      *  $state:     home.transactions
      *  - Variables
@@ -43,27 +45,28 @@
     /*FUNCTIONS BINDING*/
       vm.startTransaction = startTransaction;
       vm.refreshTasks = refreshTasks;
+      vm.showComments = showComments;
     /*SERVICES AND DATA API*/
       refreshTasks();
-
     /*FUNCTIONS STRUCTURES*/
       function refreshTasks(){
-        vm.promise = tasksService.all($rootScope.auth.userId).$promise;
-        
-        tasksService.all($rootScope.auth.userId).$promise.then(function(data){
+        var credentials = $localStorage.getObject('auth');
+        vm.promise = tasksService.all(credentials.userId).$promise.then(function(data){
+          console.log("getting the taaask")
           vm.actas = [];
           data.data.forEach( function(task) {
             var id = task.id;
             if(task.taskDefinitionKey == "profesorTask"){
               tasksService.variables(id).$promise.then(function(data){
                 var object = data.reduce(function(o, v, i) {
-                      if(v.value.charAt(0) == '[')
+                      if(v.value && v.value.charAt(0) == '[')
                         o[v.name] = JSON.parse(v.value);  
                       else
                         o[v.name] = v.value;
                       return o;
                     }, {});
                 object.taskId = id;
+                console.log(object)
                 vm.actas.push(object);
               });
             }
@@ -81,7 +84,29 @@
         $localStorage.setObject(transaction.taskId,transaction)
         $state.go('home.grading',{transactionId:transaction.taskId});
       }
-
+      function DialogController($scope, $mdDialog, acta){
+        console.log(acta)
+        $scope.comments = acta.comentarios;
+        $scope.hide = function() {
+          $mdDialog.hide();
+        }
+      }
+      function showComments(ev,acta){
+        $mdDialog.show({
+          controller: DialogController,
+          templateUrl: 'app/views/partials/comments.html',
+          parent: angular.element(document.body),
+          targetEvent: ev,
+          clickOutsideToClose: true,
+          escapeToClose:true,
+          fullscreeen: true,
+          locals: {
+            acta: acta
+          }
+        }).then(function(answer){
+          console.log("ok")
+        });
+      }
 
 
       

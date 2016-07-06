@@ -56,18 +56,19 @@
                 <tr md-row    ng-repeat="data in vm.tableData.alumnos | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
                   <td md-cell>{{data.claveUnica}}</td>
                   <td md-cell>{{data.nombre}}</td>
-                  <td md-cell>{{data.calificacion ? data.calificacion : 'NP'   }}</td>
+                  <td md-cell>{{data.calificacion ? data.calificacion : 'NA'   }}
+                  </td>
                 </tr>
               </tbody>
             </table>
       </md-table-container>
       <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.alumnos.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
       <section  ng-if="vm.role != 0" layout="row" layout-align="end center" >
-            <md-button  ng-click="vm.rejectToProfessor()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Regresar al Profesor</md-tooltip><i class="material-icons">cancel</i> Rechazar Acta</md-button>
+            <md-button  ng-click="vm.rejectToProfessor($event)" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Regresar al Profesor</md-tooltip><i class="material-icons">cancel</i> Rechazar Acta</md-button>
       </section>
       <section  ng-if="vm.role == 0" layout="row" layout-align="end center" >
-            <md-button ng-click="vm.rejectToJefe()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Regresar al Jefe Dep.</md-tooltip><i class="material-icons">cancel</i> Rechazar Acta</md-button>
-            <md-button ng-click="vm.previewPdf()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Visualizar el PDF</md-tooltip><i class="material-icons">picture_as_pdf</i> Ver Acta</md-button>
+            <md-button ng-click="vm.rejectToJefe($event)" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Regresar al Jefe Dep.</md-tooltip><i class="material-icons">cancel</i> Rechazar Acta</md-button>
+            <md-button ng-click="vm.previewPdf($event)" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Visualizar el PDF</md-tooltip><i class="material-icons">picture_as_pdf</i> Ver Acta</md-button>
       </section>
     </md-card>
   </span>

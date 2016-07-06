@@ -1,0 +1,16 @@
+<md-dialog aria-label="comments to the teacher" layout="row" 
+           layout-align="center center">
+  <md-content >
+    <md-card flex ng-repeat="(key, value) in comments">
+      <md-card-content>
+        <h2>Commentario {{key+1}}</h2>
+        <p>{{value.value}}</p>
+      </md-card-content>
+      <md-card-footer>
+      {{value.timestamp | date:'medium'}}
+      </md-card-footer>
+    </md-card>
+    <md-button layout-align="end center" aria-label="Aceptar"
+               ng-click="hide()">Aceptar</md-button>
+  </md-content>
+</md-dialog>

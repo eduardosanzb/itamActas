@@ -3,7 +3,7 @@
             class="md-whiteframe-z2 md-sidenav-left">
   <md-toolbar md-theme="custom" class="md-hue-1 md-whiteframe-z2">
     <md-button aria-label="logo" layout="row" layout-align="center center" class="md-toolbar-tools md-warn">
-      <img  src="{{vm.logo}}" ng-class=" {'logo-img':!vm.$mdMedia('gt-sm')} ">
+      <img  src="assets/images/itamtransparente.png" ng-class=" {'logo-img':!vm.$mdMedia('gt-sm')} ">
     </md-button>
   </md-toolbar>
       <md-button ng-repeat-start="item in vm.menuItems" layout="column" layout-align="center center"
@@ -36,7 +36,7 @@
             <img class="img-circle" ng-src="assets/images/usuario.png">
             <md-menu md-offset="0 50">
                 <md-button class="capitalize" ng-click="$mdOpenMenu()" aria-label="Open menu">
-                    <span>{{userName}}</span>
+                    <span>{{vm.name}}</span>
                     <i class="material-icons">keyboard_arrow_down</i>
                 </md-button>
                 <md-menu-content width="6">

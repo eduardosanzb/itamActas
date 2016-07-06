@@ -10,11 +10,11 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
       $rootScope.previousState = from;
     });
 
-    $rootScope.auth = {
-      userId:'admin',
-      password:'admin'
-    }
-    $rootScope.groups = ['admin'];
+    // $rootScope.auth = {
+    //   userId:'jefeDepartamento1',
+    //   password:'welcome1'
+    // }
+    // $rootScope.groups = ['admin','profesores','jefesDepartamentos'];
    
   })
  
@@ -34,6 +34,7 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
           controllerAs:'vm',
           resolve:{
             'clearScope':function($rootScope){
+              localStorage.clear();
               delete $rootScope.userName;
               delete $rootScope.auth;
               delete $rootScope.groups;
@@ -57,9 +58,9 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
           title: 'Revision'
         },
         resolve:{
-          'auth': function($rootScope){
-            if($rootScope.auth){
-              return $rootScope.auth;
+          'auth': function($localStorage){
+            if($localStorage.getObject('auth')){
+              return true;
             } else {
               $state.go('login');
             }
@@ -75,9 +76,9 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
           title: 'Statistics'
         },
         resolve:{
-          'auth': function($rootScope){
-            if($rootScope.auth){
-              return $rootScope.auth;
+          'auth': function($localStorage){
+            if($localStorage.getObject('auth')){
+              return true;
             } else {
               $state.go('login');
             }
@@ -92,9 +93,9 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
         data: {
         },
         resolve:{
-          'auth': function($rootScope){
-            if($rootScope.auth){
-              return $rootScope.auth;
+          'auth': function($localStorage){
+            if($localStorage.getObject('auth')){
+              return true;
             } else {
               $state.go('login');
             }
@@ -111,9 +112,9 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
           title: 'Grading'
         },
         resolve:{
-          'auth': function($rootScope){
-            if($rootScope.auth){
-              return $rootScope.auth;
+          'auth': function($localStorage){
+            if($localStorage.getObject('auth')){
+              return true;
             } else {
               $state.go('login');
             }
@@ -129,9 +130,9 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
           title: 'Table Teacher'
         },
         resolve:{
-          'auth': function($rootScope){
-            if($rootScope.auth){
-              return $rootScope.auth;
+          'auth': function($localStorage){
+            if($localStorage.getObject('auth')){
+              return true;
             } else {
               $state.go('login');
             }
