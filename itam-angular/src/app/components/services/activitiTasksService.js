@@ -2,14 +2,13 @@
     'use strict';
     angular.module('app')
             .service('tasksService', [ 
-            '$resource','$http','Base64', '$q',
+            '$resource','$http','Base64', '$q', 'ServerUrl',
             tasksService
     ]);
-    function tasksService ($resource, $http, Base64, $q) {
+    function tasksService ($resource, $http, Base64, $q, ServerUrl) {
       return {
         all:function(teacherId){
-          $http.defaults.headers.common[{"Authorization" : "Basic " + Base64.encode("admin:admin")}];
-          return $resource("http://cloud.lucasianmexico.com:8585/activiti-rest/service/runtime/tasks",null,{
+          return $resource(ServerUrl + "/activiti-rest/service/runtime/tasks",null,{
             get:{
               method: 'GET',
                 headers: {
@@ -21,8 +20,7 @@
           
         },
         variables:function(taskId){
-          $http.defaults.headers.common[{"Authorization" : "Basic " + Base64.encode("admin:admin")}];
-          return $resource("http://cloud.lucasianmexico.com:8585/activiti-rest/service/runtime/tasks/:id/variables",null,{
+          return $resource(ServerUrl + "/activiti-rest/service/runtime/tasks/:id/variables",null,{
             query:{
               method: 'GET',
               isArray: true,
@@ -38,15 +36,14 @@
           //console.log("Releasing the task " + taskId);
           //console.log("With the values: ");
           newTask = JSON.stringify(newTask);
-          //console.log(newTask);
+          console.log(newTask);
           function onSuccess(){
             return $q.resolve("Yeah");
           }
           function onError(){
             return $q.reject("Noo");
           }
-          $http.defaults.headers.common[{"Authorization" : "Basic " + Base64.encode("admin:admin")}];
-          $resource("http://cloud.lucasianmexico.com:8585/activiti-rest/service/runtime/tasks/:taskId",null,{
+          $resource(ServerUrl + "/activiti-rest/service/runtime/tasks/:taskId",null,{
             save:{
               method: 'POST',
               isArray: true,
@@ -59,6 +56,6 @@
 
         }
       }
-      return $resource("http://cloud.lucasianmexico.com:8585/activiti-rest/service/runtime/tasks");
+      return $resource(ServerUrl + "/activiti-rest/service/runtime/tasks");
     }
   })();

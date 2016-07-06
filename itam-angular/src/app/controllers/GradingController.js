@@ -25,13 +25,14 @@
      */
         var vm = this;
         /*INITIALIZING VARIABLES*/
-          vm.limitOptions = [5, 10, 15];
-          vm.filter = {}
-          vm.query = {
-              order: 'claveUnica',
-              limit: 5,
-              page: 1
-          };
+          vm.regex = "(((10)|([0-9]))((\.[0-9])|(\.[0-9][0-9])){0,1}|NP|np)";
+            vm.limitOptions = [5, 10, 15];
+            vm.filter = {}
+            vm.query = {
+                order: 'claveUnica',
+                limit: 5,
+                page: 1
+            };
           vm.options = {
                 rowSelection: false,
                 multiSelect: false,
@@ -71,7 +72,8 @@
                 title: 'Agrega la Calificacion',
                 validators: {
                   'md-maxlength': 4,
-                  type:"number"
+                  type:"number",
+                  pattern: vm.regex
                 }
               };
               
@@ -113,6 +115,7 @@
                               ]
                             }
               tasksService.release(vm.tableData.taskId,variables)
+              $localStorage.setObject($stateParams.transactionId, null);
               $state.go($rootScope.previousState);
           }
           function printPdf() {

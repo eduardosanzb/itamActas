@@ -34,16 +34,16 @@
         </section>
         <section layout-align="end center">
             <img class="img-circle" ng-src="assets/images/usuario.png">
-            <md-menu md-offset="-40 50">
+            <md-menu md-offset="0 50">
                 <md-button class="capitalize" ng-click="$mdOpenMenu()" aria-label="Open menu">
-                    <span>Hector Fernandez</span>
+                    <span>{{userName}}</span>
                     <i class="material-icons">keyboard_arrow_down</i>
                 </md-button>
                 <md-menu-content width="6">
                 <img  class="user-img" ng-src="assets/images/usuario.png">
                     
                       <section layout="row" layout-align="center center">
-                        <md-button class="md-raised " ng-click="$mdCloseMenu()" ui-sref="home.revision">Inicio</md-button>
+                        <!-- <md-button class="md-raised " ng-click="$mdCloseMenu()" ui-sref="home.revision">Inicio</md-button> -->
                         <md-button class="md-raised " ng-click="$mdCloseMenu()" ui-sref="login">Log out</md-button>
                       </section>
                       

@@ -11,8 +11,14 @@
               <md-button  ng-click="vm.refreshTasks()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Recargar Actas</md-tooltip><i class="material-icons">refresh</i></md-button>
             </div>
         </md-toobar>
-          <table md-table>
-            <thead md-head md-order="vm.query.order" >
+        <md-card ng-show="vm.achtungFlag" flex-xs flex-gt-xs="50" style="achtung-card">
+          <md-card-content>
+            <h2>No Existen</h2>
+            <p>Mas tareas</p>
+          </md-card-content>
+        </md-card>
+          <table  md-table md-progress="vm.promise">
+            <thead md-head md-order="vm.query.order" ng-hide="vm.achtungFlag">
               <tr md-row>
                 <th md-column md-order-by="vm.tableData.period"><span>Periodo</span></th>
                 <th md-column md-order-by="vm.tableData.subject"><span>Materia</span></th>
@@ -22,13 +28,13 @@
               </tr>
             </thead>
             <tbody md-body>
-              <tr md-row md-select="vm.tableData"  md-auto-select="vm.options.autoSelect"  ng-repeat="data in vm.tableData | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
-                <td md-cell>{{data.period}}</td>
-                <td md-cell>{{data.subject}}</td>
-                <td md-cell>{{data.group}}</td>
-                <td md-cell>{{data.title}}</td>
-                <td md-cell><md-button ng-click="vm.startRevision(data.period)" 
-                             ng-disabled="data.inspected"
+              <tr md-row md-select="vm.actas"  md-auto-select="vm.options.autoSelect"  ng-repeat="data in vm.actas | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
+                <td md-cell>{{data.periodo}}</td>
+                <td md-cell>{{data.claveMateria}}</td>
+                <td md-cell>{{data.grupo}}</td>
+                <td md-cell>{{data.tituloMateria}}</td>
+                <td md-cell><md-button ng-click="vm.startRevision(data)" 
+                             ng-disabled="false"
                              aria-label="inspections"
                              class="md-icon-button launch md-raised" >
                     <i class="material-icons">search</i>
@@ -37,7 +43,7 @@
             </tbody>
           </table>
         </md-table-container>
-        <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
+        <md-table-pagination ng-hide="vm.achtungFlag" md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
    
 </md-content>
 

@@ -1,13 +1,16 @@
 <md-content ng-controller="GradingController as vm"  layout-padding>
     <md-table-container>
-    <div layout="row" layout-align="end center" layout-xs="column">
-              <md-toobar flex="20" style="margin:0px" >
-                <md-input-container style="margin:15px;">
-                    <label>Buscar</label>
-                    <input type="text" ng-model="vm.filter.search">
-                </md-input-container>
-              </md-toobar>
-          </div>
+   <md-toobar  layout="row" layout-align="space-between end" style="margin:0px" >
+            <div>
+              <md-input-container style="margin:15px;">
+                  <label>Buscar</label>
+                  <input type="text" ng-model="vm.filter.search">
+              </md-input-container>
+            </div>
+             <div>
+              <md-button ng-click="vm.sendTransaction()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Firmar y Enviar Acta</md-tooltip><i class="material-icons">email</i></md-button>
+            </div>
+        </md-toobar>
           <table md-table>
             <thead md-head md-order="vm.query.order" >
               <tr md-row>
@@ -39,9 +42,9 @@
     </md-table-container>
     <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
     <section  layout="row" layout-align="end center" >
-          <md-button ng-click="vm.printPdf()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Revisar Acta</md-tooltip><i class="material-icons">picture_as_pdf</i></md-button>
-          <md-button ng-click="vm.saveDraft()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Guardar Borrador</md-tooltip><i class="material-icons">save</i></md-button>
-          <md-button ng-click="vm.sendTransaction()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Firmar y Enviar Acta</md-tooltip><i class="material-icons">email</i></md-button>
+          <md-button ng-click="vm.printPdf()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Previsualizar PDF</md-tooltip><i class="material-icons">picture_as_pdf</i>Revisar Acta</md-button>
+          <md-button ng-click="vm.saveDraft()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Continuar despues</md-tooltip><i class="material-icons">save</i>Guardar Borrador</md-button>
+          
     </section>
 </md-content>
 

@@ -3,23 +3,26 @@
 
   angular.module('app')
           .service('$localStorage', [
-          '$window',
+          '$window','Base64',
           $localStorage
   ]);
 
-  function $localStorage($window){
+  function $localStorage($window, Base64){
     return {
         set: function(key, value) {
-            $window.localStorage[key] = value;
+            var theValue = Base64.encode(value);
+            $window.localStorage[key] = theValue;
         },
         get: function(key, defaultValue) {
-            return $window.localStorage[key] || defaultValue;
+            return Base64.decode($window.localStorage[key]) || defaultValue;
         },
         setObject: function(key, value) {
-            $window.localStorage[key] = JSON.stringify(value);
+          var object = JSON.stringify(value);
+            $window.localStorage[key] = Base64.encode(object);
         },
         getObject: function(key) {
-            return JSON.parse($window.localStorage[key] || 'null');
+          var object = Base64.decode($window.localStorage[key]);
+            return JSON.parse(object || 'null');
         }
     }
     

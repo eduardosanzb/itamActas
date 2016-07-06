@@ -3,10 +3,10 @@
   angular
     .module('app')
     .controller('StatisticsController', 
-      ['$state', '$scope', 'studentService','googleChartApiPromise',
+      ['$state', '$scope', '$rootScope', 'tasksService','googleChartApiPromise','$stateParams', '$localStorage',
       StatisticsController]);
 
-  function StatisticsController($state, $scope, studentService,googleChartApiPromise) {
+  function StatisticsController($state, $scope, $rootScope, tasksService,googleChartApiPromise, $stateParams, $localStorage) {
     /*  Template:   app/views/statistics.html
      *  $state:     home.statistics
      *  - Variables
@@ -25,7 +25,19 @@
      */
     var vm = this;
     /*INITIALIZING VARIABLES*/
+      vm.avgInclusive = 0;
+      vm.avgExclusive = 0;
+      vm.okStudents = 0;
+      vm.grades = {
+        na:0,
+        6:0,
+        7:0,
+        8:0,
+        9:0,
+        10:0
+      }
       vm.limitOptions = [5, 10, 15];
+      vm.role = $rootScope.groups.indexOf("direccion"); // 0 == true ; -1 == false
       vm.filter = {}
       vm.query = {
           order: 'studentId',
@@ -42,19 +54,51 @@
             limitSelect: true,
             pageSelect: true
       };
-      $scope.labels = ["Aprobados", "Reprobados"];
-      $scope.dataP = [3, 5];
-      $scope.dataNP = [3, 15];
-      $scope.colors = ['#096729', '#096729', '#096729'];
+      
+      vm.data = {
+        withoutNa:[[]],
+        all:[[]]
+      }
+      $scope.labelNa = ["6","7","8","9","10"];
+      $scope.labelAll = ["6", "7","8","9","10","NA" ];
+      $scope.series = ['Calificación'];
+      
+      
+
 
     /*FUNCTIONS BINDING*/
+      vm.signTransaction = signTransaction;
+      vm.rejectToJefe = rejectToJefe;
+      vm.sendToDirector = sendToDirector;
+      vm.rejectToProfessor = rejectToProfessor;
     /*SERVICES AND DATA API*/
-      studentService
-              .loadAllItems()
-              .then(function(tableData) {
-                vm.tableData = [].concat(tableData);
-                //console.log(vm.tableData);
-              });
+      //Get the data for the table form the $LocalStorage
+      calculationForGraphs();      
+      function calculationForGraphs(){
+        var students = $localStorage.getObject($stateParams.transactionId).alumnos;
+        students.forEach( function(student) {
+          if(student.calificacion && student.calificacion > 6){
+            vm.okStudents++;
+
+            vm.avgExclusive += parseFloat(student.calificacion.replace(",", "."));
+            vm.avgInclusive += parseFloat(student.calificacion.replace(",", "."));
+            vm.grades[student.calificacion]++;
+          } else {
+            vm.grades.na++;
+            vm.avgInclusive = (student.calificacion)? vm.avgExclusive+parseFloat(student.calificacion.replace(",", ".")) : vm.avgExclusive;
+          }
+        });
+        angular.forEach(vm.grades, function(value, key){
+          if(key != 'na'){
+            vm.data.withoutNa[0].push(value);
+            vm.data.all[0].push(value);
+          } else {
+            vm.data.all[0].push(value);
+          }
+        })
+        console.log(vm.grades)
+        vm.tableData = $localStorage.getObject($stateParams.transactionId);
+      }
       googleChartApiPromise.then(function(data){
         /*  This is a Promise for the Google charts API, then we can create the chart/png
          *  Strategy:
@@ -65,16 +109,19 @@
          *  5. We start drawing the chart
          */
           var dataP = google.visualization.arrayToDataTable([
-            ['Aprobados', 'Reprobados'],
-            ['Aprobados',     11],
-            ['Reprobados',      2]
+            ["Element", "Density", { role: "style" } ],
+            ["Copper", 8.94, "#b87333"],
+            ["Silver", 10.49, "silver"],
+            ["Gold", 19.30, "gold"],
+            ["Platinum", 21.45, "color: #e5e4e2"]
           ]);
+
           var optionsP = {'title':'Sin NP',
                          'width':400,
                          'height':300};
           var dataNP = google.visualization.arrayToDataTable([
-            ['Aprobados', 'Reprobados'],
-            ['Aprobados',     6],
+            ['6', '7', '8', '9', '10','NA'],
+            ['6',     6],
             ['Reprobados',      4]
           ]);
           var optionsNP = {'title':'Con NP',
@@ -82,9 +129,9 @@
                          'height':300};
 
           var chart_p_div = document.getElementById('chartP_div');
-          var chart_np_div = document.getElementById('chartNP_div');
-          var chartP = new google.visualization.PieChart(chart_p_div);
-          var chartNP = new google.visualization.PieChart(chart_np_div);
+          //var chart_np_div = document.getElementById('chartNP_div');
+          var chartP = new google.visualization.ColumnChart(chart_p_div);
+          //var chartNP = new google.visualization.ColumnChart(chart_np_div);
 
           // Wait for the chart to finish drawing before calling the getImageURI() method.
           google.visualization.events.addListener(chartP, 'ready', function () {
@@ -94,21 +141,113 @@
              *  2- POST THE URI TO THE .WAR
              */
           });
-           google.visualization.events.addListener(chartNP, 'ready', function () {
-            chartNP_div.innerHTML = '<img src="' + chartNP.getImageURI() + '">';
-            /*  TODO
-             *  1. GET THE URI OF THE IMG
-             *  2- POST THE URI TO THE .WAR
-             */
-          });
+          //  google.visualization.events.addListener(chartNP, 'ready', function () {
+          //   chartNP_div.innerHTML = '<img src="' + chartNP.getImageURI() + '">';
+          //   /*  TODO
+          //    *  1. GET THE URI OF THE IMG
+          //    *  2- POST THE URI TO THE .WAR
+          //    */
+          // });
           chartP.draw(dataP, optionsP);
-          chartNP.draw(dataNP, optionsNP);
+          //chartNP.draw(dataNP, optionsNP);
         });
     /*FUNCTIONS STRUCTURES*/
-    //console.log(canvas2image())
-     
-    
+      //Functions of the Director
+      function signTransaction(){
+        /*  Strategy:
+         *  1. Get the If from the stateparams
+         *  2. Create the checkout object
+         *  3. Make the POST to the service
+         *  4. Clear the $localStorage
+         *  5. Go back previous state
+         */
+         var checkoutObject = {
+              "action" : "complete",
+              "variables" : [
+                  {
+                      "name":"approveDG",
+                      "type":"string",
+                      "value":"true",
+                      "scope":"global"
+                  }
+              ]
+          }
+        tasksService.release($stateParams.transactionId,checkoutObject);
+        $localStorage.setObject($stateParams.transactionId, null);
+        $state.go($rootScope.previousState);
+      }
+      function rejectToJefe(){
+        /*  Strategy:
+         *  1. Get the If from the stateparams
+         *  2. Create the checkout object
+         *  3. Make the POST to the service
+         *  4. Clear the $localStorage
+         *  5. Go back previous state
+         */
+         var checkoutObject = {
+              "action" : "complete",
+              "variables" : [
+                  {
+                      "name":"approveDG",
+                      "type":"string",
+                      "value":"false",
+                      "scope":"global"
+                  }
+              ]
+          }
+        tasksService.release($stateParams.transactionId,checkoutObject);
+        $localStorage.setObject($stateParams.transactionId, null);
+        $state.go($rootScope.previousState);
+      }
+      function previewPdf(){}
 
+      //Function of the Jefe Departamento
+      function sendToDirector(){
+        /*  Strategy:
+         *  1. Get the If from the stateparams
+         *  2. Create the checkout object
+         *  3. Make the POST to the service
+         *  4. Clear the $localStorage
+         *  5. Go back previous state
+         */
+         var checkoutObject = {
+              "action" : "complete",
+              "variables" : [
+                  {
+                      "name":"approveJD",
+                      "type":"string",
+                      "value":"true",
+                      "scope":"global"
+                  }
+              ]
+          }
+        tasksService.release($stateParams.transactionId,checkoutObject);
+        $localStorage.setObject($stateParams.transactionId, null);
+        $state.go($rootScope.previousState);
+      }
+      function rejectToProfessor(){
+        /*  Strategy:
+         *  1. Get the If from the stateparams
+         *  2. Create the checkout object
+         *  3. Make the POST to the service
+         *  4. Clear the $localStorage
+         *  5. Go back previous state
+         */
+         var checkoutObject = {
+              "action" : "complete",
+              "variables" : [
+                  {
+                      "name":"approveJD",
+                      "type":"string",
+                      "value":"false",
+                      "scope":"global"
+                  }
+              ]
+          }
+        tasksService.release($stateParams.transactionId,checkoutObject);
+        $localStorage.setObject($stateParams.transactionId, null);
+        $state.go($rootScope.previousState);
+      }
     
 
     

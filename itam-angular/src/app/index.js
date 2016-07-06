@@ -3,31 +3,43 @@
 angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
   'ngSanitize', 'ui.router', 'ngMaterial', 'nvd3', 'app', 'md.data.table',
   'mdDataTable','chart.js','googlechart', 'ngResource'])
-
+  
+  .constant('ServerUrl', "http://cloud.lucasianmexico.com:8585")
   .run(function($rootScope){
     $rootScope.$on('$stateChangeSuccess', function(event, to, toParams, from, fromParams){
       $rootScope.previousState = from;
-      //console.log(from);
     });
+
+    $rootScope.auth = {
+      userId:'admin',
+      password:'admin'
+    }
+    $rootScope.groups = ['admin'];
+   
   })
  
 
   .config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider,
                     $mdIconProvider, ChartJsProvider, $httpProvider, $resourceProvider) {
 
-    //$resourceProvider.defaults.stripTrailingSlashes = false;
-     //$httpProvider.defaults.withCredentials = true;
-     // $httpProvider.defaults.useXDomain = true;
-     // delete $httpProvider.defaults.headers.common['X-Requested-With'];
     
-    ChartJsProvider.setOptions({ colors : [ '#096729', '#096729', '#096729', '#46B096729FBD', '#096729', '#096729', '#096729'] });
+    ChartJsProvider.setOptions({
+     colors : [ '#096729', '#fffff'] 
+   });
     $stateProvider
       .state('login',{
         url: '/login',
           templateUrl: 'app/views/login.html',
           controller: 'LoginController',
           controllerAs:'vm',
-          resolve:{}
+          resolve:{
+            'clearScope':function($rootScope){
+              delete $rootScope.userName;
+              delete $rootScope.auth;
+              delete $rootScope.groups;
+              delete $rootScope.previousState;
+            }
+          }
       })
       .state('home', {
         url: '',
@@ -43,6 +55,15 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
         controllerAs: 'vm',
         data: {
           title: 'Revision'
+        },
+        resolve:{
+          'auth': function($rootScope){
+            if($rootScope.auth){
+              return $rootScope.auth;
+            } else {
+              $state.go('login');
+            }
+          }
         }
       })
       .state('home.statistics', {
@@ -52,6 +73,15 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
         controllerAs: 'vm',
         data: {
           title: 'Statistics'
+        },
+        resolve:{
+          'auth': function($rootScope){
+            if($rootScope.auth){
+              return $rootScope.auth;
+            } else {
+              $state.go('login');
+            }
+          }
         }
       })
       .state('home.transactions', {
@@ -60,7 +90,16 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
         controller: 'TransactionsController',
         controllerAs: 'vm',
         data: {
-          title: 'transactions'
+        },
+        resolve:{
+          'auth': function($rootScope){
+            if($rootScope.auth){
+              return $rootScope.auth;
+            } else {
+              $state.go('login');
+            }
+          }
+          
         }
       })
       .state('home.grading', {
@@ -70,15 +109,33 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
         controllerAs: 'vm',
         data: {
           title: 'Grading'
+        },
+        resolve:{
+          'auth': function($rootScope){
+            if($rootScope.auth){
+              return $rootScope.auth;
+            } else {
+              $state.go('login');
+            }
+          }
         }
       })
-      .state('home.teacher', {
-        url: '/teacher',
-        controller: 'TeacherController',
+      .state('home.admin', {
+        url: '/admin',
+        controller: 'AdminController',
         controllerAs: 'vm',
-        templateUrl: 'app/views/table-teacher.html',
+        templateUrl: 'app/views/admin.html',
         data: {
           title: 'Table Teacher'
+        },
+        resolve:{
+          'auth': function($rootScope){
+            if($rootScope.auth){
+              return $rootScope.auth;
+            } else {
+              $state.go('login');
+            }
+          }
         }
       });
 

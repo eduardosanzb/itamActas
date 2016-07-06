@@ -2,12 +2,12 @@
 
   angular
     .module('app')
-    .controller('TeacherController', [
-      'instanceService', '$mdDialog',
-      TeacherController
+    .controller('AdminController', [
+      'instanceService', '$mdDialog','adminService',
+      AdminController
     ]);
 
-  function TeacherController(instanceService, $mdDialog) {
+  function AdminController(instanceService, $mdDialog, adminService) {
         /*  Template:   app/views/table-teacher.html
          *  $state:     home.grading
          *  - Variables
@@ -42,19 +42,24 @@
           };
         /*FUNCTIONS BINDING*/
          vm.startTransactions = startTransactions;
+         vm.refreshTransaction = getTransactions;
         /*SERVICES AND DATA API*/
-            instanceService
-              .loadAllItems()
-              .then(function(tableData) {
-                vm.tableData = [].concat(tableData);
-              });
+        getTransactions();
+            
         /*FUNCTIONS STRUCTURES*/
+          function getTransactions(){
+            vm.promise = adminService.get().$promise.then(function(data){
+              vm.tableData = data.usuariosSrie;
+              console.log(data.usuariosSrie)
+            });
+          }
          function startTransactions (ev) {
             /*  This function Creates a confirmation to start the transactions (Actas) and then start the flow.
              *  Strategy:
              *  1. Create a Dialog from the components library
              *  2. Utilize the event binding.
              */
+             console.log(vm.selected)
             var confirm = $mdDialog.confirm()
               .title('Activando Actas')
               .textContent('¿Estas Seguro de iniciar ' + vm.selected.length + ' Actas?')

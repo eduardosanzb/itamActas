@@ -1,37 +1,46 @@
 <div>
-<section> <!-- THIS ARE THE PLOTS OF GOOGLE CHART TO DOWNLOAD THE PNG, THATS WHY THEY ARE HIDED -->
-            <div id='chartP_div' ng-hide="true"></div>
-            <div id='chartNP_div' ng-hide="true"></div>
+<section ng-hide="false"> <!-- THIS ARE THE PLOTS OF GOOGLE CHART TO DOWNLOAD THE PNG, THATS WHY THEY ARE HIDED -->
+            <div id='chartP_div' ></div>
+            <div id='chartNP_div'></div>
 </section>
 
-
   <span>
-    <md-card layout="row" layout-align="space-around center" layout-padding>
-      <section layout="col" layout-align="space-around center">
-            <canvas id="pie" class="chart chart-pie"
-              chart-data="dataP" chart-labels="labels" chart-options="options" chart-colors="colors">
-            </canvas>
-          
-            <canvas id="pie" class="chart chart-pie"
-              chart-data="dataNP" chart-labels="labels" chart-options="options">
-            </canvas>
+    <md-card layout="row" layout-align="center center" layout-padding>
+      <section layout="row" layout-align="space-between center">
+        <div>
+          <canvas id="bar" class="chart chart-bar" 
+          chart-data="vm.data.all" 
+          chart-labels="labelAll" chart-series="series" 
+          chart-legend="true">
+          </canvas>
+          <p>Promedio del grupo: {{vm.avgInclusive/vm.tableData.alumnos.length | number:2}} </p>
+        </div>
+        <div>
+          <canvas id="bar" class="chart chart-bar" 
+          chart-data="vm.data.withoutNa" 
+          chart-labels="labelNa" chart-series="series"
+          chart-legend="true">
+          </canvas>
+          <p>Promedio del grupo sin Nas: {{vm.avgExclusive/vm.okStudents | number:2}} </p>
+        </div>
       </section>
     </md-card>
   </span>
-
-
-
   <span>
     <md-card  layout-padding>
       <md-table-container>
-          <div layout="row" layout-align="end center" layout-xs="column">
-                <md-toobar flex="20" style="margin:0px" >
-                  <md-input-container style="margin:15px;">
-                      <label>Buscar</label>
-                      <input type="text" ng-model="vm.filter.search">
-                  </md-input-container>
-                </md-toobar>
+      <md-toobar  layout="row" layout-align="space-between end" style="margin:0px" >
+            <div>
+              <md-input-container style="margin:15px;">
+                  <label>Buscar</label>
+                  <input type="text" ng-model="vm.filter.search">
+              </md-input-container>
             </div>
+             <div>
+              <md-button ng-if="vm.role != 0" ng-click="vm.sendToDirector()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Revisar Acta</md-tooltip><i class="material-icons">assignment_turned_in</i></md-button>
+              <md-button ng-if="vm.role == 0" ng-click="vm.signTransaction()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Validar Acta</md-tooltip><i class="material-icons">assignment_turned_in</i></md-button>
+            </div>
+        </md-toobar>
             <table md-table>
               <thead md-head md-order="vm.query.order" >
                 <tr md-row>
@@ -44,23 +53,21 @@
                 </tr>
               </thead>
               <tbody md-body>
-                <tr md-row md-select="vm.tableData"   ng-repeat="data in vm.tableData | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
-                  <td md-cell>{{data.id}}</td>
-                  <td md-cell>{{data.name}}</td>
-                  <td md-cell>{{data.grade}} pts</td>
+                <tr md-row    ng-repeat="data in vm.tableData.alumnos | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
+                  <td md-cell>{{data.claveUnica}}</td>
+                  <td md-cell>{{data.nombre}}</td>
+                  <td md-cell>{{data.calificacion ? data.calificacion : 'NP'   }}</td>
                 </tr>
               </tbody>
             </table>
       </md-table-container>
-      <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
-      <section  layout="row" layout-align="end center" >
-            <md-button ng-click="vm.printPdf()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Rechazar Acta</md-tooltip><i class="material-icons">cancel</i></md-button>
-            <md-button ng-click="vm.previewPdf()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Ver Acta</md-tooltip><i class="material-icons">picture_as_pdf</i></md-button>
-            <md-button ng-click="vm.sendTransaction()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Validar Acta</md-tooltip><i class="material-icons">assignment_turned_in</i></md-button>
+      <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.alumnos.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
+      <section  ng-if="vm.role != 0" layout="row" layout-align="end center" >
+            <md-button  ng-click="vm.rejectToProfessor()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Regresar al Profesor</md-tooltip><i class="material-icons">cancel</i> Rechazar Acta</md-button>
       </section>
-      <section  layout="row" layout-align="end center" >
-            <md-button ng-click="vm.printPdf()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Rechazarr Acta</md-tooltip><i class="material-icons">cancel</i></md-button>
-            <md-button ng-click="vm.saveDraft()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Firmar Acta</md-tooltip><i class="material-icons">assignment_turned_in</i></md-button>
+      <section  ng-if="vm.role == 0" layout="row" layout-align="end center" >
+            <md-button ng-click="vm.rejectToJefe()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Regresar al Jefe Dep.</md-tooltip><i class="material-icons">cancel</i> Rechazar Acta</md-button>
+            <md-button ng-click="vm.previewPdf()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Visualizar el PDF</md-tooltip><i class="material-icons">picture_as_pdf</i> Ver Acta</md-button>
       </section>
     </md-card>
   </span>

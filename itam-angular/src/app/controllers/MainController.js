@@ -3,11 +3,15 @@
   angular
        .module('app')
        .controller('MainController', [
-          'navService', '$mdSidenav', '$mdBottomSheet', '$log', '$q', '$state', '$mdToast','$mdMedia',
+          'navService', '$mdSidenav', '$mdBottomSheet', 
+          '$log', '$q', '$state', '$mdToast','$mdMedia',
+          '$rootScope',
           MainController
        ]);
 
-  function MainController(navService, $mdSidenav, $mdBottomSheet, $log, $q, $state, $mdToast, $mdMedia) {
+  function MainController(navService, $mdSidenav, $mdBottomSheet,
+                          $log, $q, $state, $mdToast, $mdMedia,
+                          $rootScope) {
     /*  COMPLETETemplate:   app/views/transactions.html
      *  $state:     home.transactions
      *  - Variables
@@ -36,7 +40,13 @@
     navService
       .loadAllItems()
       .then(function(menuItems) {
-        vm.menuItems = [].concat(menuItems);
+        menuItems.forEach( function(group) {
+           $rootScope.groups.forEach( function(role) {
+          if(group[role]){
+            vm.menuItems.push(group);
+          }
+        });
+        });
       });
 
     function toggleRightSidebar() {

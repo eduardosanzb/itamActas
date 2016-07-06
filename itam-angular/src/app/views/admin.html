@@ -7,6 +7,7 @@
               </md-input-container>
             </div>
              <div>
+             <md-button ng-click="vm.refreshTransaction()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Actualizar la lista</md-tooltip><i class="material-icons">refresh</i>Refrescar</md-button>
               <md-button  ng-click="vm.startTransactions($event)" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Iniciar Actas</md-tooltip><i class="material-icons">play_arrow</i></md-button>
             </div>
     </md-toobar>
@@ -17,7 +18,7 @@
                           md-progress="vm.promise">
             <thead md-head md-order="vm.query.order" >
               <tr md-row>
-                <th md-column md-order-by="vm.tableData.period"><span>CM</span></th>
+                <th md-column md-order-by="vm.tableData.period"><span>CRN</span></th>
                 <th md-column md-order-by="vm.tableData.subject"><span>Grupo</span></th>
                 <th md-column md-numeric md-order-by="vm.tableData.group" md-desc><span>Materia</span></th>
                 <th md-column md-numeric md-order-by="vm.tableData.title"><span>Nombre del Profesor</span></th>
@@ -27,12 +28,12 @@
             </thead>
             <tbody md-body>
               <tr md-row md-select="data"  md-auto-select="vm.options.autoSelect"  ng-repeat="data in vm.tableData | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
-                <td md-cell>{{data.cm}}</td>
-                <td md-cell>{{data.group}}</td>
-                <td md-cell>{{data.subject}}</td>
-                <td md-cell>{{data.teacher}}</td>
-                <td md-cell>{{data.chief}}</td>
-                <td md-cell>{{data.date}}</td>
+                <td md-cell>{{data.SWBGRUP_CRN}}</td>
+                <td md-cell>{{data.SWBGRUP_CRSE_NUMB}}</td>
+                <td md-cell>{{data.SWBGRUP_TITLE}}</td>
+                <td md-cell>{{data.SWBGRUP_PROF_NAME}}</td>
+                <td md-cell>{{data.SWBGRUP_JEFE_DEP_NAME}}</td>
+                <td md-cell>{{data.SWBGRUP_FECHA_EVALUACION | date:'medium'}}</td>
               </tr>
             </tbody>
           </table>

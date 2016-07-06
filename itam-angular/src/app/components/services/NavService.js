@@ -12,17 +12,21 @@
       {
         name: 'Revision Actas',
         icon: 'assessment',
-        sref: '.revision'
+        sref: '.revision',
+        jefesDepartamentos:true,
+        direccion:true
       },
       {
         name: 'Modificacion Actas',
         icon: 'assignment',
-        sref: '.transactions'
+        sref: '.transactions',
+        profesores:true
       },
       {
         name: 'Creacion Actas',
         icon: 'view_module',
-        sref: '.teacher'
+        sref: '.admin',
+        admin:true
       }
     ];
 

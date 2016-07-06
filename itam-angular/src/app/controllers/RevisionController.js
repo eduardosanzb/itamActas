@@ -3,10 +3,15 @@
   angular
     .module('app')
     .controller('RevisionController', 
-      ['$state', 'tasksService', '$http', 'Base64','studentService',
+      ['$state', 'tasksService', '$http',
+       'Base64','studentService', '$localStorage',
+       '$rootScope',
       RevisionController]);
 
-  function RevisionController($state, tasksService,  $http, Base64, studentService) {
+  function RevisionController($state, tasksService,  
+                              $http, Base64, 
+                              studentService, $localStorage, 
+                              $rootScope) {
     /*  Template:   app/views/revision.html
      *  $state:     home.revision
      *  - Variables
@@ -42,53 +47,47 @@
      vm.startRevision = startRevision;
      vm.refreshTasks = refreshTasks;
     /*SERVICES AND DATA API*/
-     //refreshTasks();
-     studentService.loadAllItems().then(function(data){
-      console.log(data)
-      vm.tableData = data;
-     })
-      
-    
-
-     
+     refreshTasks();
 
 
     /*FUNCTIONS STRUCTURES*/
-      function startRevision(transactionId) {
-        console.log("We are going to review the transaction");
-        console.log(vm.actas)
-        $state.go('home.statistics',{transactionId:transactionId});
+      function startRevision(transaction) {
+        //console.log("We are going to review the transaction" + transaction.taskId);
+        $localStorage.setObject(transaction.taskId,transaction)
+        $state.go('home.statistics',{transactionId:transaction.taskId});
       }
       function refreshTasks(){
-        vm.promise = tasksService.all("jefeDepartamento1").$promise;
         vm.actas = [];
-        tasksService.all("jefeDepartamento1").$promise.then(function(data){
+        vm.promise = tasksService.all($rootScope.auth.userId).$promise;
+        tasksService.all($rootScope.auth.userId).$promise.then(function(data){
           data.data.forEach( function(task) {
-            var id = task.id;
-            tasksService.variables(id).$promise.then(function(data){
-              console.log(data)
-              var object = data.reduce(function(o, v, i) {
-                console.log(o)
-                console.log(v)
-                console.log(i)
+            if(task.taskDefinitionKey == "departamentoTask" || task.taskDefinitionKey == "direccionTask"){
+              var id = task.id;
+              tasksService.variables(id).$promise.then(function(data){
+                var object = data.reduce(function(o, v, i) {
+                  if(v.value){
                     if(v.value.charAt(0) == '[')
-                      o[v.name] = JSON.parse(v.value);  
-                    else
-                      o[v.name] = v.value;
-                    return o;
-                  }, {});
-              object.taskId = id;
-              vm.actas.push(object);
-            });
-            //return actas;
+                        o[v.name] = JSON.parse(v.value);  
+                      else
+                        o[v.name] = v.value;
+                  }
+                      return o;
+                    }, {});
+                object.taskId = id;
+                vm.actas.push(object);
+              });
+            }
           });
         })
       }
+      
     
 
     
+
+
+
 
 
   }
-
 })();

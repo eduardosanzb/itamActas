@@ -3,11 +3,11 @@
   angular
     .module('app')
     .controller('TransactionsController', [
-       '$scope', '$state', 'tasksService', '$http', '$localStorage', '$timeout',
+       '$scope', '$state', 'tasksService', '$http', '$localStorage', '$timeout','$rootScope',
       TransactionsController
     ]);
 
-  function TransactionsController( $scope, $state, tasksService, $http, $localStorage, $timeout) {
+  function TransactionsController( $scope, $state, tasksService, $http, $localStorage, $timeout, $rootScope) {
     /*  Template:   app/views/transactions.html
      *  $state:     home.transactions
      *  - Variables
@@ -22,6 +22,7 @@
      */
     var vm = this;
     /*INITIALIZING VARIABLES*/
+      vm.actas = [];
       vm.limitOptions = [5, 10, 15];
       vm.filter = {}
       vm.query = {
@@ -47,23 +48,25 @@
 
     /*FUNCTIONS STRUCTURES*/
       function refreshTasks(){
-        vm.promise = tasksService.all("profesor1").$promise;
-        vm.actas = [];
-        tasksService.all("profesor1").$promise.then(function(data){
+        vm.promise = tasksService.all($rootScope.auth.userId).$promise;
+        
+        tasksService.all($rootScope.auth.userId).$promise.then(function(data){
+          vm.actas = [];
           data.data.forEach( function(task) {
             var id = task.id;
-            tasksService.variables(id).$promise.then(function(data){
-              var object = data.reduce(function(o, v, i) {
-                    if(v.value.charAt(0) == '[')
-                      o[v.name] = JSON.parse(v.value);  
-                    else
-                      o[v.name] = v.value;
-                    return o;
-                  }, {});
-              object.taskId = id;
-              vm.actas.push(object);
-            });
-            //return actas;
+            if(task.taskDefinitionKey == "profesorTask"){
+              tasksService.variables(id).$promise.then(function(data){
+                var object = data.reduce(function(o, v, i) {
+                      if(v.value.charAt(0) == '[')
+                        o[v.name] = JSON.parse(v.value);  
+                      else
+                        o[v.name] = v.value;
+                      return o;
+                    }, {});
+                object.taskId = id;
+                vm.actas.push(object);
+              });
+            }
           });
         })
       }
