@@ -20,11 +20,11 @@
           <table  md-table md-progress="vm.promise">
             <thead md-head md-order="vm.query.order" ng-hide="vm.achtungFlag">
               <tr md-row>
-                <th md-column md-order-by="vm.tableData.period"><span>Periodo</span></th>
-                <th md-column md-order-by="vm.tableData.subject"><span>Materia</span></th>
-                <th md-column md-numeric md-order-by="vm.tableData.group" md-desc><span>Grupo</span></th>
-                <th md-column md-numeric md-order-by="vm.tableData.title"><span>Titulo Materia</span></th>
-                <th md-column md-numeric ><span>Revisar</span></th>
+                <th md-column md-order-by="periodo"><span>Periodo</span></th>
+                <th md-column md-order-by="claveMateria"><span>Materia</span></th>
+                <th md-column md-order-by="grupo" md-desc><span>Grupo</span></th>
+                <th md-column md-order-by="tituloMateria"><span>Titulo Materia</span></th>
+                <th md-column ><span>Revisar</span></th>
               </tr>
             </thead>
             <tbody md-body>

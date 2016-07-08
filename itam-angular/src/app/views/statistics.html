@@ -21,7 +21,7 @@
           chart-labels="labelNa" chart-series="series"
           chart-legend="true">
           </canvas>
-          <p>Promedio del grupo sin Nas: {{vm.avgExclusive/vm.okStudents | number:2}} </p>
+          <p>Promedio del grupo sin NA's: {{vm.avgExclusive/vm.okStudents | number:2}} </p>
         </div>
       </section>
     </md-card>
@@ -37,15 +37,15 @@
               </md-input-container>
             </div>
              <div>
-              <md-button ng-if="vm.role != 0" ng-click="vm.sendToDirector()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Revisar Acta</md-tooltip><i class="material-icons">assignment_turned_in</i></md-button>
-              <md-button ng-if="vm.role == 0" ng-click="vm.signTransaction()" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Validar Acta</md-tooltip><i class="material-icons">assignment_turned_in</i></md-button>
+              <md-button ng-if="vm.role != 0" ng-click="vm.sendToDirector($event)" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Revisar Acta</md-tooltip><i class="material-icons">assignment_turned_in</i></md-button>
+              <md-button ng-if="vm.role == 0" ng-click="vm.signTransaction($event)" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Validar Acta</md-tooltip><i class="material-icons">assignment_turned_in</i></md-button>
             </div>
         </md-toobar>
             <table md-table>
               <thead md-head md-order="vm.query.order" >
                 <tr md-row>
-                  <th md-column md-order-by="vm.tableData.id"><span>Clave Única</span></th>
-                  <th md-column md-order-by="vm.tableData.name"><span>Nombre del Alumno</span></th>
+                  <th md-column md-order-by="claveUnica"><span>Clave Única</span></th>
+                  <th md-column md-order-by="nombre"><span>Nombre del Alumno</span></th>
                   <th md-column >
                     <md-icon>format_list_numbered</md-icon>
                     <span>Calificaciones</span>
@@ -64,11 +64,12 @@
       </md-table-container>
       <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.alumnos.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
       <section  ng-if="vm.role != 0" layout="row" layout-align="end center" >
-            <md-button  ng-click="vm.rejectToProfessor($event)" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Regresar al Profesor</md-tooltip><i class="material-icons">cancel</i> Rechazar Acta</md-button>
+            <md-button ng-click="vm.previewPdf($event)" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Visualizar el PDF</md-tooltip><i class="material-icons">picture_as_pdf</i> Ver Acta</md-button>
+            <md-button  ng-click="vm.rejectToProfessor($event)" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Regresar al Profesor</md-tooltip><i class="material-icons">cancel</i> Regresar Acta</md-button>
       </section>
       <section  ng-if="vm.role == 0" layout="row" layout-align="end center" >
-            <md-button ng-click="vm.rejectToJefe($event)" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Regresar al Jefe Dep.</md-tooltip><i class="material-icons">cancel</i> Rechazar Acta</md-button>
             <md-button ng-click="vm.previewPdf($event)" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Visualizar el PDF</md-tooltip><i class="material-icons">picture_as_pdf</i> Ver Acta</md-button>
+            <md-button ng-click="vm.rejectToJefe($event)" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Regresar al Jefe Dep.</md-tooltip><i class="material-icons">cancel</i> Regresar Acta</md-button>
       </section>
     </md-card>
   </span>

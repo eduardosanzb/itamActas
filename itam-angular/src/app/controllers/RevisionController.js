@@ -4,14 +4,14 @@
     .module('app')
     .controller('RevisionController', 
       ['$state', 'tasksService', '$http',
-       'Base64','studentService', '$localStorage',
-       '$rootScope','$mdDialog',
+       'Base64', '$localStorage',
+       '$rootScope','$mdDialog', '$timeout',
       RevisionController]);
 
   function RevisionController($state, tasksService,  
                               $http, Base64, 
-                              studentService, $localStorage, 
-                              $rootScope, $mdDialog) {
+                              $localStorage, 
+                              $rootScope, $mdDialog, $timeout) {
     /*  Template:   app/views/revision.html
      *  $state:     home.revision
      *  - Variables
@@ -29,7 +29,7 @@
       vm.limitOptions = [5, 10, 15];
       vm.filter = {}
       vm.query = {
-          order: 'period',
+          order: 'periodo',
           limit: 5,
           page: 1
       };
@@ -48,7 +48,9 @@
      vm.refreshTasks = refreshTasks;
      vm.showComments = showComments;
     /*SERVICES AND DATA API*/
-     refreshTasks();
+     vm.promise = $timeout(function(){
+        refreshTasks();
+      },1000);
 
 
     /*FUNCTIONS STRUCTURES*/
@@ -57,30 +59,33 @@
         $localStorage.setObject(transaction.taskId,transaction)
         $state.go('home.statistics',{transactionId:transaction.taskId});
       }
+      function filterTasks(tasks){
+          var tasksArray = tasks.map(function(task){
+            var id = task.id;
+            var role = task.taskDefinitionKey;
+            if( (role == "departamentoTask") || (role == "direccionTask")){
+                  tasksService.variables(id).$promise.then(function(data){
+                    var object = data.reduce(function(o, v, i) {
+                          if(v.value && v.value.charAt(0) == '[')
+                            o[v.name] = JSON.parse(v.value);  
+                          else
+                            o[v.name] = v.value;
+                          return o;
+                        }, {});
+                    object.taskId = id;
+                    console.log(object)
+                    vm.actas.push(object)
+                    return object;
+                  });
+                }
+          }); 
+      }
       function refreshTasks(){
         var credentials = $localStorage.getObject('auth');
-        vm.actas = [];
         vm.promise = tasksService.all(credentials.userId).$promise;
-        tasksService.all(credentials.userId).$promise.then(function(data){
-          data.data.forEach( function(task) {
-            if(task.taskDefinitionKey == "departamentoTask" || task.taskDefinitionKey == "direccionTask"){
-              var id = task.id;
-              tasksService.variables(id).$promise.then(function(data){
-                var object = data.reduce(function(o, v, i) {
-                  if(v.value){
-                    if(v.value.charAt(0) == '[')
-                        o[v.name] = JSON.parse(v.value);  
-                      else
-                        o[v.name] = v.value;
-                  }
-                      return o;
-                    }, {});
-                object.taskId = id;
-                console.log(object)
-                vm.actas.push(object);
-              });
-            }
-          });
+        tasksService.all(credentials.userId).$promise.then(function(response){
+          vm.actas = [];
+          filterTasks(response.data);
         })
       }
       function showComments(ev,acta){

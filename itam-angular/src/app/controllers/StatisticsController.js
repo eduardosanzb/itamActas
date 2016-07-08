@@ -4,11 +4,11 @@
     .module('app')
     .controller('StatisticsController', 
       ['$state', '$scope', '$rootScope', 'tasksService','googleChartApiPromise',
-       '$stateParams', '$localStorage', '$mdDialog',
+       '$stateParams', '$localStorage', '$mdDialog','$timeout',
       StatisticsController]);
 
   function StatisticsController($state, $scope, $rootScope, tasksService, googleChartApiPromise, 
-                                $stateParams, $localStorage, $mdDialog) {
+                                $stateParams, $localStorage, $mdDialog, $timeout) {
     /*  Template:   app/views/statistics.html
      *  $state:     home.statistics
      *  - Variables
@@ -42,7 +42,7 @@
       vm.role = $localStorage.getObject('groups').indexOf("direccion"); // 0 == true ; -1 == false
       vm.filter = {}
       vm.query = {
-          order: 'studentId',
+          order: 'claveUnica',
           limit: 5,
           page: 1
       };
@@ -73,9 +73,8 @@
       vm.rejectToProfessor = rejectToProfessor;
     /*SERVICES AND DATA API*/
       //Get the data for the table form the $LocalStorage
-      calculationForGraphs();      
+      $timeout(calculationForGraphs(),1000);
       vm.tableData = $localStorage.getObject($stateParams.transactionId);
-      
       googleChartApiPromise.then(function(data){
         /*  This is a Promise for the Google charts API, then we can create the chart/png
          *  Strategy:
@@ -152,8 +151,8 @@
           }
         })
       }
-      //Functions of the Director
-      function signTransaction(){
+
+      function signTransaction(ev){
         /*  Strategy:
          *  1. Get the If from the stateparams
          *  2. Create the checkout object
@@ -161,20 +160,61 @@
          *  4. Clear the $localStorage
          *  5. Go back previous state
          */
-         var checkoutObject = {
-              "action" : "complete",
-              "variables" : [
-                  {
-                      "name":"approveDG",
-                      "type":"string",
-                      "value":"true",
-                      "scope":"global"
-                  }
-              ]
-          }
-        tasksService.release($stateParams.transactionId,checkoutObject);
-        $localStorage.setObject($stateParams.transactionId, null);
-        $state.go($rootScope.previousState);
+         var confirm = $mdDialog.confirm()
+              .title('Liberando Acta')
+              .textContent('¿Liberar el Acta al Sistema?')
+              .ariaLabel('Liberando Actas')
+              .targetEvent(ev)
+              .ok('Si')
+              .cancel('Cancelar');
+          $mdDialog.show(confirm).then(function(){
+            var checkoutObject = {
+                  "action" : "complete",
+                  "variables" : [
+                      {
+                          "name":"approveDG",
+                          "type":"string",
+                          "value":"true",
+                          "scope":"global"
+                      }
+                  ]
+            }
+            tasksService.release($stateParams.transactionId,checkoutObject);
+            $localStorage.setObject($stateParams.transactionId, null);
+            $state.go($rootScope.previousState);
+          }); 
+      }
+      function sendToDirector(ev){
+        /*  Strategy:
+         *  1. Get the If from the stateparams
+         *  2. Create the checkout object
+         *  3. Make the POST to the service
+         *  4. Clear the $localStorage
+         *  5. Go back previous state
+         */
+         var confirm = $mdDialog.confirm()
+              .title('Confirmando Acta')
+              .textContent('¿Estas seguro de enviar el Acta a Direcciòn?')
+              .ariaLabel('Liberando Actas')
+              .targetEvent(ev)
+              .ok('Si')
+              .cancel('Cancelar');
+          $mdDialog.show(confirm).then(function(){
+            var checkoutObject = {
+                "action" : "complete",
+                "variables" : [
+                    {
+                        "name":"approveJD",
+                        "type":"string",
+                        "value":"true",
+                        "scope":"global"
+                    }
+                ]
+            }
+            tasksService.release($stateParams.transactionId,checkoutObject);
+            $localStorage.setObject($stateParams.transactionId, null);
+            $state.go($rootScope.previousState);
+          });
       }
       function rejectToJefe(ev){
         /*  Strategy:
@@ -184,90 +224,19 @@
          *  4. Clear the $localStorage
          *  5. Go back previous state
          */
-          var confirm = $mdDialog.prompt()
-            .title('¿Estas Seguro de Rechazar el Acta?')
-            .textContent('¿Algún Comentario?')
-            .placeholder('Comentario')
-            .ariaLabel('Comentario')
-            .targetEvent(ev)
-            .ok('Rechazar')
-            .cancel('Cancelar');
-          $mdDialog.show(confirm).then(function(result) {
-            var newComment = {
-                value: result,
-                timestamp: Date.now()
-              }
-            vm.tableData.comentarios = (vm.tableData.comentarios) ? vm.tableData.comentarios.concat(newComment) :[].concat(newComment);
-            console.log(JSON.stringify(vm.tableData.comentarios))
-            var checkoutObject = {
-                "action" : "complete",
-                "variables" : [
-                    {
-                        "name":"approveDG",
-                        "type":"string",
-                        "value":"false",
-                        "scope":"global"
-                    },
-                    {
-                        "name":"comentarios",
-                        "value":JSON.stringify(vm.tableData.comentarios)
-                    }
-                ]
-            }
-            tasksService.release($stateParams.transactionId,checkoutObject);
-            $localStorage.setObject($stateParams.transactionId, null);
-            $state.go($rootScope.previousState);
-          }, function() {
-          });
-      }
-      // function rejectToJefe(){
-      //   /*  Strategy:
-      //    *  1. Get the If from the stateparams
-      //    *  2. Create the checkout object
-      //    *  3. Make the POST to the service
-      //    *  4. Clear the $localStorage
-      //    *  5. Go back previous state
-      //    */
-      //    var checkoutObject = {
-      //         "action" : "complete",
-      //         "variables" : [
-      //             {
-      //                 "name":"approveDG",
-      //                 "type":"string",
-      //                 "value":"false",
-      //                 "scope":"global"
-      //             }
-      //         ]
-      //     }
-      //   tasksService.release($stateParams.transactionId,checkoutObject);
-      //   $localStorage.setObject($stateParams.transactionId, null);
-      //   $state.go($rootScope.previousState);
-      // }
-      function previewPdf(){}
-
-      //Function of the Jefe Departamento
-      function sendToDirector(){
-        /*  Strategy:
-         *  1. Get the If from the stateparams
-         *  2. Create the checkout object
-         *  3. Make the POST to the service
-         *  4. Clear the $localStorage
-         *  5. Go back previous state
-         */
-         var checkoutObject = {
-              "action" : "complete",
-              "variables" : [
-                  {
-                      "name":"approveJD",
-                      "type":"string",
-                      "value":"true",
-                      "scope":"global"
+          var confirm = {
+                  controller: DialogController,
+                  templateUrl: 'app/views/partials/newCommentDialog.html',
+                  parent: angular.element(document.body),
+                  targetEvent: ev,
+                  clickOutsideToClose: true,
+                  escapeToClose:true,
+                  fullscreeen: true,
+                  locals:{
+                    role:"approveDG"
                   }
-              ]
-          }
-        tasksService.release($stateParams.transactionId,checkoutObject);
-        $localStorage.setObject($stateParams.transactionId, null);
-        $state.go($rootScope.previousState);
+                }
+          $mdDialog.show(confirm);
       }
       function rejectToProfessor(ev){
         /*  Strategy:
@@ -277,26 +246,35 @@
          *  4. Clear the $localStorage
          *  5. Go back previous state
          */
-          var confirm = $mdDialog.prompt()
-            .title('¿Estas Seguro de Rechazar el Acta?')
-            .textContent('¿Algún Comentario?')
-            .placeholder('Comentario')
-            .ariaLabel('Comentario')
-            .targetEvent(ev)
-            .ok('Rechazar')
-            .cancel('Cancelar');
-          $mdDialog.show(confirm).then(function(result) {
-            var newComment = {
+          var confirm = {
+                  controller: DialogController,
+                  templateUrl: 'app/views/partials/newCommentDialog.html',
+                  parent: angular.element(document.body),
+                  targetEvent: ev,
+                  clickOutsideToClose: true,
+                  escapeToClose:true,
+                  fullscreeen: true,
+                  locals:{
+                    role:"approveJD"
+                  }
+                }
+          $mdDialog.show(confirm);
+      }
+
+
+      function previewPdf(){}
+      function DialogController($scope, $mdDialog, role){
+        $scope.submit = function(result){
+          var newComment = {
                 value: result,
                 timestamp: Date.now()
               }
             vm.tableData.comentarios = (vm.tableData.comentarios) ? vm.tableData.comentarios.concat(newComment) :[].concat(newComment);
-            console.log(JSON.stringify(vm.tableData.comentarios))
             var checkoutObject = {
                 "action" : "complete",
                 "variables" : [
                     {
-                        "name":"approveJD",
+                        "name":role,
                         "type":"string",
                         "value":"false",
                         "scope":"global"
@@ -309,14 +287,14 @@
             }
             tasksService.release($stateParams.transactionId,checkoutObject);
             $localStorage.setObject($stateParams.transactionId, null);
+            $mdDialog.hide();
             $state.go($rootScope.previousState);
-          }, function() {
-          });
+        }
+        $scope.hide = function() {
+          $mdDialog.hide();
+        }
       }
-      function openDialog(ev){
-        // Appending dialog to document.body to cover sidenav in docs app
-        
-      }
+      
 
     
 

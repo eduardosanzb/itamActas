@@ -2,11 +2,16 @@
     angular
         .module('app')
         .controller('GradingController', [
-            '$stateParams', '$mdEditDialog','$rootScope','$state','$localStorage', 'tasksService',
+            '$stateParams', '$mdEditDialog',
+            '$rootScope','$state','$localStorage', 
+            'tasksService', '$mdDialog',
             GradingController
         ]);
 
-    function GradingController($stateParams, $mdEditDialog, $rootScope, $state, $localStorage, tasksService) {
+    function GradingController($stateParams, $mdEditDialog, 
+                               $rootScope, $state, 
+                               $localStorage, tasksService,
+                               $mdDialog) {
     /*  Template:   app/views/partials/grading.html
      *  $state:     home.grading
      *  - Variables
@@ -127,15 +132,24 @@
              */
               console.log("Previewing the PDF");
           }
-          function sendTransaction() {
+          function sendTransaction(ev) {
             /*  This function has the purpose of start the transaction i the activiti backend
              *  Strategy:
              *  1. 
              *  2. 
              *  3. Go back to the last function
              */
-             var newGrades = angular.toJson(vm.tableData.alumnos,true);
-             var variables = {
+             var confirm = $mdDialog.confirm()
+              .title('Firmado Acta')
+              .textContent('¿Estas Seguro de firmar y enviar el Acta al Jefe de Departamento')
+              .ariaLabel('Firmando Actas')
+              .targetEvent(ev)
+              .ok('Si')
+              .cancel('Cancelar');
+             
+              $mdDialog.show(confirm).then(function(){
+                var newGrades = angular.toJson(vm.tableData.alumnos,true);
+                var variables = {
                               "action" : "complete",
                               "variables" : [
                                   {
@@ -151,9 +165,13 @@
                                     "value" : newGrades
                                 }
                               ]
-                            }
-              tasksService.release(vm.tableData.taskId,variables)
-              $state.go($rootScope.previousState);
+                }
+                tasksService.release(vm.tableData.taskId,variables)
+                $state.go($rootScope.previousState);
+              },function(){
+                console.log("NO quiere enviarla")
+              });              
+              
           }
 
        

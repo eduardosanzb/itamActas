@@ -2,21 +2,23 @@
     'use strict';
     angular.module('app')
             .service('tasksService', [ 
-            '$resource','$http','Base64', '$q', 'ServerUrl',
+            '$resource','$http','Base64', '$q', 'ServerUrl','$localStorage','$timeout',
             tasksService
     ]);
-    function tasksService ($resource, $http, Base64, $q, ServerUrl) {
+    function tasksService ($resource, $http, Base64, $q, ServerUrl, $localStorage, $timeout) {
+      var credentials = $localStorage.getObject('auth');
       return {
         all:function(teacherId){
-          return $resource(ServerUrl + "/activiti-rest/service/runtime/tasks",null,{
+          var request =  $resource(ServerUrl + "/activiti-rest/service/runtime/tasks",null,{
             get:{
               method: 'GET',
                 headers: {
-                    'Authorization': 'Basic ' + Base64.encode("admin:admin")
+                    'Authorization': 'Basic ' + Base64.encode(credentials.userId + ':' + credentials.password)
                 }
             }
-          })
-          .get({assignee:teacherId});
+          });
+         return request.get({assignee:teacherId});
+            
           
         },
         variables:function(taskId){
@@ -25,7 +27,7 @@
               method: 'GET',
               isArray: true,
                 headers: {
-                    'Authorization': 'Basic ' + Base64.encode("admin:admin")
+                    'Authorization': 'Basic ' + Base64.encode(credentials.userId + ':' + credentials.password)
                 }
             }
           })
@@ -36,7 +38,6 @@
           //console.log("Releasing the task " + taskId);
           //console.log("With the values: ");
           newTask = JSON.stringify(newTask);
-          console.log(newTask);
           function onSuccess(){
             return $q.resolve("Yeah");
           }
@@ -48,7 +49,7 @@
               method: 'POST',
               isArray: true,
                 headers: {
-                    'Authorization': 'Basic ' + Base64.encode("admin:admin")
+                    'Authorization': 'Basic ' + Base64.encode(credentials.userId + ':' + credentials.password)
                 }
             }
           })

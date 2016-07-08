@@ -8,7 +8,6 @@
     function loginService ($resource, $http, Base64, $q, ServerUrl, groupService) {
       return {
         'auth':function(credentials){
-          
           return $resource(ServerUrl + "/activiti-rest/service/identity/users/:userId",
                        null,
                        {

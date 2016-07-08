@@ -10,11 +10,7 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
       $rootScope.previousState = from;
     });
 
-    // $rootScope.auth = {
-    //   userId:'jefeDepartamento1',
-    //   password:'welcome1'
-    // }
-    // $rootScope.groups = ['admin','profesores','jefesDepartamentos'];
+    
    
   })
  
@@ -35,10 +31,6 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
           resolve:{
             'clearScope':function($rootScope){
               localStorage.clear();
-              delete $rootScope.userName;
-              delete $rootScope.auth;
-              delete $rootScope.groups;
-              delete $rootScope.previousState;
             }
           }
       })
@@ -47,7 +39,16 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
         templateUrl: 'app/views/main.html',
         controller: 'MainController',
         controllerAs: 'vm',
-        abstract: true
+        abstract: true,
+        resolve:{
+          'auth': function($localStorage){
+            if($localStorage.getObject('auth')){
+              return true;
+            } else {
+              $state.go('login');
+            }
+          }
+        }
       })
       .state('home.revision', {
         url: '/revision',

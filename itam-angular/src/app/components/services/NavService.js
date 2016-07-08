@@ -10,20 +10,20 @@
   function navService($q){
     var menuItems = [
       {
-        name: 'Revision Actas',
+        name: 'Estadísticas',
         icon: 'assessment',
         sref: '.revision',
         jefesDepartamentos:true,
         direccion:true
       },
       {
-        name: 'Modificacion Actas',
+        name: 'Profesor',
         icon: 'assignment',
         sref: '.transactions',
         profesores:true
       },
       {
-        name: 'Creacion Actas',
+        name: 'Admin',
         icon: 'view_module',
         sref: '.admin',
         admin:true

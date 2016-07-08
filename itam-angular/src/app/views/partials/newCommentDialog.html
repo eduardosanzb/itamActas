@@ -1,0 +1,22 @@
+<md-dialog class="md-dialog-content" >
+<h2 class="md-title ng-binding">¿Estas Seguro de Regresar el Acta?</h2>
+<div class="md-dialog-content-body ng-scope"><p class="ng-binding">Agrega un Comentario</p></div>
+  
+  <form name="myForm" ng-app="myApp" >
+  <div class="col">
+    <div class="col-xs-8">
+      <md-input-container>
+        <label>Comentario</label>
+        <input name="name" id="name" ng-model="obj.name" ng-required="true">
+        <div ng-messages="myForm.name.$error">
+          <div ng-message="required">El comentario es requerido.</div>
+        </div>
+      </md-input-container>
+    </div>
+  </div>
+  <section layout="col" layout-align="end center">
+    <md-button type="button" ng-click="hide()">Cancelar</md-button>
+    <md-button class="md-primary" ng-disabled="myForm.$invalid" ng-click="submit(obj.name)">REGRESAR</md-button>
+  </section>
+</form>
+</md-dialog>

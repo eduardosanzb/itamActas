@@ -3,11 +3,11 @@
   angular
     .module('app')
     .controller('AdminController', [
-      'instanceService', '$mdDialog','adminService','processService',
+       '$mdDialog','adminService','processService',
       AdminController
     ]);
 
-  function AdminController(instanceService, $mdDialog, adminService, processService) {
+  function AdminController( $mdDialog, adminService, processService) {
         /*  Template:   app/views/table-teacher.html
          *  $state:     home.grading
          *  - Variables
@@ -26,7 +26,7 @@
           vm.limitOptions = [5, 10, 15];
           vm.filter = {}
           vm.query = {
-              order: 'studentId',
+              order: 'SWBGRUP_CRN',
               limit: 5,
               page: 1
           };
@@ -50,7 +50,6 @@
           function getTransactions(){
             vm.promise = adminService.getTransactions().get().$promise.then(function(data){
               vm.tableData = data.usuariosSrie;
-              console.log(data.usuariosSrie)
             });
           }
          function startTransactions (ev) {
@@ -92,6 +91,7 @@
                       "swbgrupTermCode":task.SWBGRUP_TERM_CODE,
                       "swbgrupCrn":task.SWBGRUP_CRN
                     }
+                    vm.selected = [];
                     processService.resolve(newInstance).$promise.then(function(){
                     adminService.releaseTransaction(oldTransaction).then(getTransactions);
 
