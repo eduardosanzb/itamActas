@@ -32,8 +32,10 @@
                 <i class="material-icons">menu</i>
             </md-button>
         </section>
-        <section layout-align="end center">
-            <img class="img-circle" ng-src="assets/images/usuario.png">
+        <section layout="col" layout-align="center center" style="margin-top:5px">
+            <div>
+              <img class="img-circle" ng-src="assets/images/usuario.png">
+            </div>
             <md-menu md-offset="0 50">
                 <md-button class="capitalize" ng-click="$mdOpenMenu()" aria-label="Open menu">
                     <span>{{vm.name}}</span>

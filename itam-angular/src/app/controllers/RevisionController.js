@@ -5,13 +5,13 @@
     .controller('RevisionController', 
       ['$state', 'tasksService', '$http',
        'Base64', '$localStorage',
-       '$rootScope','$mdDialog', '$timeout',
+       '$rootScope','$mdDialog', '$timeout','pdfService',
       RevisionController]);
 
   function RevisionController($state, tasksService,  
                               $http, Base64, 
                               $localStorage, 
-                              $rootScope, $mdDialog, $timeout) {
+                              $rootScope, $mdDialog, $timeout, pdfService) {
     /*  Template:   app/views/revision.html
      *  $state:     home.revision
      *  - Variables
@@ -26,6 +26,7 @@
      */
     var vm = this;
     /*INITIALIZING VARIABLES*/
+      vm.role = $localStorage.getObject('groups').indexOf("direccion"); // 0 == true ; -1 == false
       vm.limitOptions = [5, 10, 15];
       vm.filter = {}
       vm.query = {
@@ -50,7 +51,7 @@
     /*SERVICES AND DATA API*/
      vm.promise = $timeout(function(){
         refreshTasks();
-      },1000);
+      },3000);
 
 
     /*FUNCTIONS STRUCTURES*/
@@ -73,7 +74,6 @@
                           return o;
                         }, {});
                     object.taskId = id;
-                    console.log(object)
                     vm.actas.push(object)
                     return object;
                   });
@@ -82,11 +82,17 @@
       }
       function refreshTasks(){
         var credentials = $localStorage.getObject('auth');
-        vm.promise = tasksService.all(credentials.userId).$promise;
-        tasksService.all(credentials.userId).$promise.then(function(response){
-          vm.actas = [];
-          filterTasks(response.data);
-        })
+        if(vm.role == 0){ //It is Direccion
+          vm.promise = tasksService.all(credentials.userId, true).$promise.then(function(response){
+            vm.actas = [];
+            filterTasks(response.data);
+          })
+        } else {
+          vm.promise = tasksService.all(credentials.userId, false).$promise.then(function(response){
+            vm.actas = [];
+            filterTasks(response.data);
+          })
+        }
       }
       function showComments(ev,acta){
         $mdDialog.show({
@@ -105,14 +111,51 @@
         });
       }
       function DialogController($scope, $mdDialog, acta){
-        console.log(acta)
         $scope.comments = acta.comentarios;
         $scope.hide = function() {
           $mdDialog.hide();
         }
       }
       
-    
+    vm.previewPdf = function(){
+        var chart1 = (vm.chartAll) ? vm.chartAll : null;
+        var chart2 = (vm.chartNoNa) ? vm.chartNoNa : null;
+        var acta = vm.tableData;
+        var test = [
+          {
+            nombre : 'Pepepe',
+            claveUnica: "alksdjfkñasjdhf",
+            calificacion: 2
+          },
+          {
+            nombre : 'Pepepe',
+            claveUnica: "alksdjfkñasjdhf",
+            calificacion: 2
+          },
+          {
+            nombre : 'Pepepe',
+            claveUnica: "alksdjfkñasjdhf",
+            calificacion: 2
+          }];
+        var object = {
+          folio: 1,
+          crn: 2,
+          periodo: 3,
+          date: 2323,
+          nivel: 2,
+          tipo: 2,
+          clave: 3,
+          grupo: 3,
+          departamento: 3,
+          nombreMateria: 3,
+          alumnos: JSON.stringify(test),
+         idJefe: 2,
+         ifProfesor:2,
+         chart1: chart1,
+         chart2: chart2
+        }
+        pdfService.create(object)
+      }
 
     
 

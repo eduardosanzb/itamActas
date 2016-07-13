@@ -1,4 +1,10 @@
 <md-content layout-padding layout-wrap>
+<md-tabs md-selected="selectedIndexInteger" md-stretch-tabs="auto" 
+        md-dynamic-height="true" md-border-bottom="true"
+        style="height:100%">
+
+  <!-- First Tabs with all the content -->
+  <md-tab label="Activar">
     <md-toobar layout="row" layout-align="space-between end" style="margin:0px" >
             <div layout="column">
               <md-input-container style="margin:15px;">
@@ -9,6 +15,7 @@
                 <label>Periodo</label>
                 <md-select ng-model="vm.filter.search2" placeholder="Periodo"> <!--md-on-close: expression; multiple:boolean; placeholder: string;-->
                   <md-select-label>Selecciona el periodo</md-select-label>
+                  <md-option ng-value=""></md-option>
                   <md-option ng-repeat="opt in vm.tableData | unique:'SWBGRUP_TERM_CODE'" >{{opt.SWBGRUP_TERM_CODE}}</md-option>
                 </md-select>
               </md-input-container>
@@ -18,7 +25,6 @@
               <md-button  ng-disabled="vm.selected <= 0" ng-click="vm.startTransactions($event)" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Iniciar Actas</md-tooltip><i class="material-icons">play_arrow</i></md-button>
             </div>
     </md-toobar>
-
     <md-table-container>  
           <table md-table md-row-select="vm.options.rowSelection" 
                           multiple="{{vm.options.multiSelect}}" 
@@ -45,7 +51,64 @@
               </tr>
             </tbody>
           </table>
-        </md-table-container>
-        <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
-       
+    </md-table-container>
+    <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination> 
+  </md-tab>
+
+
+<!-- Second tab with printing options -->
+  <md-tab label="Imprimir" style="margin:10px !important" >
+    <md-toobar layout="row" layout-align="space-between end" >
+            <div layout="column">
+              <md-input-container style="margin:15px;">
+                  <label>Buscar</label>
+                  <input type="text" ng-model="vm.filter.search">
+              </md-input-container>
+              <md-input-container style="margin:15px;">
+                <label>Periodo</label>
+                <md-select ng-model="vm.filter.search2" placeholder="Periodo"> <!--md-on-close: expression; multiple:boolean; placeholder: string;-->
+                  <md-select-label>Selecciona el periodo</md-select-label>
+                  <md-option ng-repeat="opt in vm.tableData | unique:'SWBGRUP_TERM_CODE'" >{{opt.SWBGRUP_TERM_CODE}}</md-option>
+                </md-select>
+              </md-input-container>
+            </div>
+             <div>
+             <md-button ng-click="vm.refreshTransaction()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Actualizar la lista</md-tooltip><i class="material-icons">refresh</i>Refrescar</md-button>
+              <md-button  ng-disabled="vm.selected <= 0" ng-click="vm.startTransactions($event)" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Iniciar Actas</md-tooltip><i class="material-icons">print</i></md-button>
+            </div>
+    </md-toobar>
+    <md-table-container>  
+          <table md-table md-row-select="vm.options.rowSelection" 
+                          multiple="{{vm.options.multiSelect}}" 
+                          ng-model="vm.selected" 
+                          md-progress="vm.promise">
+            <thead md-head md-order="vm.query.order" >
+              <tr md-row>
+                <th md-column md-order-by="SWBGRUP_CRN"><span>CRN</span></th>
+                <th md-column><span>Grupo</span></th>
+                <th md-column md-order-by="SWBGRUP_TITLE" md-desc><span>Materia</span></th>
+                <th md-column md-order-by="SWBGRUP_PROF_NAME"><span>Nombre del Profesor</span></th>
+                <th md-column md-order-by="SWBGRUP_JEFE_DEP_NAME" ><span>Nombre Jefe Departamento</span></th>
+                <th md-column md-order-by="SWBGRUP_FECHA_EVALUACION" ><span>Fecha de Evaluacion</span></th>
+              </tr>
+            </thead>
+            <tbody md-body>
+              <tr md-row md-select="data"  md-auto-select="vm.options.autoSelect"  ng-repeat="data in vm.tableData | filter: vm.filter.search | filter: vm.filter.search2 | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
+                <td md-cell>{{data.SWBGRUP_CRN}}</td>
+                <td md-cell>{{data.SWBGRUP_SUBJ_CODE}}-{{data.SWBGRUP_CRSE_NUMB}}-{{data.SWBGRUP_SEQ_NUMB}}</td>
+                <td md-cell>{{data.SWBGRUP_TITLE}}</td>
+                <td md-cell>{{data.SWBGRUP_PROF_NAME}}</td>
+                <td md-cell>{{data.SWBGRUP_JEFE_DEP_NAME}}</td>
+                <td md-cell>{{data.SWBGRUP_FECHA_EVALUACION | date:'medium'}}</td>
+              </tr>
+            </tbody>
+          </table>
+  </md-table-container>
+  <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination> 
+  </md-tab>
+
+
+
+</md-tabs>
+    
 </md-content>

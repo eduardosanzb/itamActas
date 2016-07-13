@@ -4,14 +4,14 @@
         .controller('GradingController', [
             '$stateParams', '$mdEditDialog',
             '$rootScope','$state','$localStorage', 
-            'tasksService', '$mdDialog',
+            'tasksService', '$mdDialog','pdfService',
             GradingController
         ]);
 
     function GradingController($stateParams, $mdEditDialog, 
                                $rootScope, $state, 
                                $localStorage, tasksService,
-                               $mdDialog) {
+                               $mdDialog, pdfService) {
     /*  Template:   app/views/partials/grading.html
      *  $state:     home.grading
      *  - Variables
@@ -30,13 +30,13 @@
      */
         var vm = this;
         /*INITIALIZING VARIABLES*/
-          vm.regex = "(((10)|([0-9]))((\.[0-9])|(\.[0-9][0-9])){0,1}|NP|np)";
-            vm.limitOptions = [5, 10, 15];
-            vm.filter = {}
-            vm.query = {
-                order: 'claveUnica',
-                limit: 5,
-                page: 1
+          vm.killTheCat = true; //Will disabe the sendToJefeDEpartamento BUtton
+          vm.limitOptions = [5, 10, 15];
+          vm.filter = {}
+          vm.query = {
+              order: 'claveUnica',
+              limit: 5,
+              page: 1
             };
           vm.options = {
                 rowSelection: false,
@@ -47,14 +47,22 @@
                 boundaryLinks: true,
                 limitSelect: true,
                 pageSelect: true
-          };
+            };
         /*FUNCTIONS BINDING*/
           vm.editGrade = editGrade;
           vm.saveDraft = saveDraft;
           vm.printPdf = printPdf;
           vm.sendTransaction = sendTransaction;
         /*SERVICES AND DATA API*/
-            vm.tableData = $localStorage.getObject($stateParams.transactionId);
+          vm.tableData = $localStorage.getObject($stateParams.transactionId);
+          if(vm.tableData.catCalificaciones){
+            //This is the array of the possible grades
+            vm.grades = $.map(vm.tableData.catCalificaciones, function(item){
+            var array = [];
+            array.push(item);
+              return item;
+            });
+          }
         /*FUNCTIONS STRUCTURES*/
           function editGrade (event, student) {
             /*  This function is an append of the component github. 
@@ -130,7 +138,14 @@
              *  2. 
              *  3. Go back to the last function
              */
-              console.log("Previewing the PDF");
+
+             var object = {
+                  SWBGRUP_TERM_CODE: vm.tableData.SWBGRUP_TERM_CODE,
+                  SWBGRUP_CRN: vm.tableData.SWBGRUP_CRN,
+                  calificaciones: angular.toJSON(vm.tableData.alumnos)
+                 }
+                 
+             pdfService.create(object)              
           }
           function sendTransaction(ev) {
             /*  This function has the purpose of start the transaction i the activiti backend
@@ -166,14 +181,20 @@
                                 }
                               ]
                 }
+                console.log(variables)
                 tasksService.release(vm.tableData.taskId,variables)
                 $state.go($rootScope.previousState);
               },function(){
                 console.log("NO quiere enviarla")
               });              
-              
           }
 
-       
+          vm.gradesValidator = function(grade){
+            if(grade !== null)
+              vm.gradesCounter++;
+            vm.activateButton = (vm.gradesCounter < vm.tableData.alumnos.length)
+                            ? true : false;
+          }
+
     }
 })();

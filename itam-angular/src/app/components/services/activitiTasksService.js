@@ -8,7 +8,7 @@
     function tasksService ($resource, $http, Base64, $q, ServerUrl, $localStorage, $timeout) {
       var credentials = $localStorage.getObject('auth');
       return {
-        all:function(teacherId){
+        all:function(teacherId,isDirector){
           var request =  $resource(ServerUrl + "/activiti-rest/service/runtime/tasks",null,{
             get:{
               method: 'GET',
@@ -17,9 +17,12 @@
                 }
             }
           });
-         return request.get({assignee:teacherId});
-            
-          
+          if(isDirector){
+            console.log("get to candidate: " + teacherId)
+            return request.get({candidateUser:teacherId});
+          } else {
+            return request.get({assignee:teacherId});
+          }
         },
         variables:function(taskId){
           return $resource(ServerUrl + "/activiti-rest/service/runtime/tasks/:id/variables",null,{

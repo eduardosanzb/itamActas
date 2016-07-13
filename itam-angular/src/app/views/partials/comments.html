@@ -1,16 +1,33 @@
-<md-dialog aria-label="comments to the teacher" layout="row" 
-           layout-align="center center">
-  <md-content >
-    <md-card flex ng-repeat="(key, value) in comments">
-      <md-card-content>
-        <h2>Commentario {{key+1}}</h2>
-        <p>{{value.value}}</p>
-      </md-card-content>
-      <md-card-footer>
-      {{value.timestamp | date:'medium'}}
-      </md-card-footer>
-    </md-card>
-    <md-button layout-align="end center" aria-label="Aceptar"
+<md-dialog aria-label="comments to the teacher" layout="col" 
+            style="height:300px">
+  <div>
+    <md-toolbar flex="none">
+    <div class="md-toolbar-tools">
+      <h3>
+        <span>Comentarios</span>
+      </h3>
+    </div>
+  </md-toolbar>
+  <md-content flex>
+    <md-list>
+      <md-list-item class="md-3-line" ng-repeat="item in comments">
+        <img ng-src="assets/images/usuario.png" alt="{{item.who}}" class="md-avatar">
+        <div class="md-list-item-text">
+          <h3>{{item.what}}</h3>
+          <h4>{{item.who}}</h4>
+          <p>
+            {{item.timestamp | date : 'medium'}}
+          </p>
+        </div>
+        <md-divider inset></md-divider>
+      </md-list-item>
+    </md-list>
+    <footer flex="none">
+     <md-button layout-align="end center" aria-label="Aceptar"
                ng-click="hide()">Aceptar</md-button>
+    </footer>
+    
   </md-content>
+
+  </div>
 </md-dialog>

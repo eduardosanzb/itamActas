@@ -1,27 +1,23 @@
+// If this code works, it was written by Eduardo Sanchez (@eduardosanzb). If not, I don't know
+// who wrote ir
 'use strict';
 
 angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
   'ngSanitize', 'ui.router', 'ngMaterial', 'nvd3', 'app', 'md.data.table',
   'mdDataTable','chart.js','googlechart', 'ngResource'])
   
-  .constant('ServerUrl', "http://cloud.lucasianmexico.com:8585")
+  //This is the Server to the REST stuff
+  //.constant('ServerUrl', "http://cloud.lucasianmexico.com:8585")
+  .constant('ServerUrl', "http://192.168.1.98:8585")
   .run(function($rootScope){
+    //This Will keep a track of the previous state the app was. Need it for the navigation
     $rootScope.$on('$stateChangeSuccess', function(event, to, toParams, from, fromParams){
       $rootScope.previousState = from;
     });
-
-    
-   
   })
  
-
   .config(function ($stateProvider, $urlRouterProvider, $mdThemingProvider,
                     $mdIconProvider, ChartJsProvider, $httpProvider, $resourceProvider) {
-
-    
-    ChartJsProvider.setOptions({
-     colors : [ '#096729', '#fffff'] 
-   });
     $stateProvider
       .state('login',{
         url: '/login',
@@ -29,11 +25,15 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
           controller: 'LoginController',
           controllerAs:'vm',
           resolve:{
+            //Will clean the scope each time the app is accessed 
             'clearScope':function($rootScope){
               localStorage.clear();
             }
           }
       })
+      /* Common Resolve for all the states: 'auth'
+      *   Will verify that there is a correct authentication in the app
+      */
       .state('home', {
         url: '',
         templateUrl: 'app/views/main.html',
@@ -140,10 +140,11 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
           }
         }
       });
-
-
     $urlRouterProvider.otherwise('/login');
 
+
+    // This is the configuration of the Angular Materials Colors
+    //    Checkout the documentation in www.material.angularjs.com
     $mdThemingProvider
       .theme('default')
         .primaryPalette('grey', {

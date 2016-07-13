@@ -52,27 +52,31 @@
             } 
             
           });
-            // if($rootScope.groups.indexOf("jefesDepartamentos")==0 || $rootScope.groups.indexOf("direccion")==0)
-            //   $state.go('home.revision');
-            // if($rootScope.groups.indexOf("admin")==0)
-            //   $state.go('home.admin');
-            // if($rootScope.groups.indexOf("profesores")==0)
-            //   $state.go('home.transactions');
-            if($localStorage.getObject('groups').indexOf("jefesDepartamentos")==0 || $localStorage.getObject('groups').indexOf("direccion")==0)
+            if($localStorage.getObject('groups')){
+              if($localStorage.getObject('groups').indexOf("jefesDepartamentos")==0 || $localStorage.getObject('groups').indexOf("direccion")==0)
               $state.go('home.revision');
-            if($localStorage.getObject('groups').indexOf("admin")==0)
-              $state.go('home.admin');
-            if($localStorage.getObject('groups').indexOf("profesores")==0)
-              $state.go('home.transactions');
+              if($localStorage.getObject('groups').indexOf("admin")==0)
+                $state.go('home.admin');
+              if($localStorage.getObject('groups').indexOf("profesores")==0)
+                $state.go('home.transactions');
+            } else {
+              $mdToast.show(
+                $mdToast.simple()
+                  .content("No Perteneces a ningun grupo")
+                  .hideDelay(2000)
+                  .position('Habla con tu Administrador')
+              );
+            }
+            
         });
       }).catch(function(error){
         console.log("Credetials incorrect")
         $mdToast.show(
-        $mdToast.simple()
-          .content("Credenciales Incorrectas")
-          .hideDelay(2000)
-          .position('El usuario y/o contraseña no son correctos')
-      );
+          $mdToast.simple()
+            .content("Credenciales Incorrectas")
+            .hideDelay(2000)
+            .position('El usuario y/o contraseña no son correctos')
+        );
       });
     }
 

@@ -7,15 +7,22 @@
                   <input type="text" ng-model="vm.filter.search">
               </md-input-container>
             </div>
+            
              <div>
-              <md-button ng-click="vm.sendTransaction($event)" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Firmar y Enviar Acta</md-tooltip><i class="material-icons">email</i></md-button>
+             <!-- This is the logic validation for the send button -->
+             <div ng-hide="true" ng-repeat="student in vm.tableData.alumnos">
+                  {{student.calificacion}}
+                  {{vm.killTheCat = (!student.calificacion) ? true: false}}
+                  {{vm.killTheCat}}
+            </div>
+              <md-button ng-disabled="vm.killTheCat" ng-click="vm.sendTransaction($event)" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Firmar y Enviar Acta</md-tooltip><i class="material-icons">email</i></md-button>
             </div>
         </md-toobar>
           <table md-table>
             <thead md-head md-order="vm.query.order" >
               <tr md-row>
-                <th md-column md-order-by="vm.tableData.alumnos.claveUnica"><span>Clave Única</span></th>
-                <th md-column md-order-by="vm.tableData.alumnos.nombre"><span>Nombre del Alumno</span></th>
+                <th md-column md-order-by="claveUnica"><span>Clave Única</span></th>
+                <th md-column md-order-by="nombre"><span>Nombre del Alumno</span></th>
                 <th md-column >
                   <md-icon>format_list_numbered</md-icon>
                   <span>Calificar</span>
@@ -30,9 +37,18 @@
               <tr md-row md-select="vm.tableData"   ng-repeat="data in vm.tableData.alumnos | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
                 <td md-cell>{{data.claveUnica}}</td>
                 <td md-cell>{{data.nombre}}</td>
-                <td md-cell ng-click="vm.editGrade($event, data)" ng-class="{'md-placeholder': !data.calificacion}">
-                  {{data.calificacion || 'Agrega la Calificacion'}}
+                <td md-cell>
+                  <md-input-container style="margin-right: 10px;">
+                    <label>Calificacion</label>
+                    <md-select ng-model="data.calificacion" ng-change="vm.gradesValidator(data.calificacion)">
+                      <md-option ng-repeat="grade in vm.grades" >{{grade}}</md-option>
+                    </md-select>
+                  </md-input-container>
                 </td>
+                
+                <!-- <td md-cell ng-click="vm.editGrade($event, data)" ng-class="{'md-placeholder': !data.calificacion}">
+                  {{data.calificacion || 'Agrega la Calificacion'}}
+                </td> -->
                 <!-- <td md-cell ng-click="vm.editComment($event, data)" ng-class="{'md-placeholder': !data.comment}">
                   {{data.comment || 'Agrega un Comentario'}}
                 </td> -->
@@ -40,7 +56,7 @@
             </tbody>
           </table>
     </md-table-container>
-    <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
+    <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.alumnos.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
     <section  layout="row" layout-align="end center" >
           <md-button ng-click="vm.printPdf()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Previsualizar PDF</md-tooltip><i class="material-icons">picture_as_pdf</i>Revisar Acta</md-button>
           <md-button ng-click="vm.saveDraft()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Continuar despues</md-tooltip><i class="material-icons">save</i>Guardar Borrador</md-button>

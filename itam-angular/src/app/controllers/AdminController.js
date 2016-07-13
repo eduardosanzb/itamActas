@@ -92,8 +92,10 @@
                       "swbgrupCrn":task.SWBGRUP_CRN
                     }
                     vm.selected = [];
+                    vm.filter = {};
                     processService.resolve(newInstance).$promise.then(function(){
-                    adminService.releaseTransaction(oldTransaction).then(getTransactions);
+                    //adminService.releaseTransaction(oldTransaction).then(getTransactions);
+                    getTransactions();
 
                     });
                   }); //forEach

@@ -14,17 +14,17 @@
           <table md-table md-progress="vm.promise" >
             <thead class="md-defaultprimary" md-head md-order="vm.query.order" >
               <tr md-row>
-                <th md-column md-order-by="vm.actas.periodo"><span>Periodo</span></th>
-                <th md-column md-order-by="vm.actas.claveMateria"><span>Materia</span></th>
-                <th md-column md-order-by="vm.actas.grupo" md-desc><span>Grupo</span></th>
-                <th md-column md-order-by="vm.actas.tituloMateria"><span>Titulo Materia</span></th>
+                <th md-column md-order-by="periodo"><span>Periodo</span></th>
+                <th md-column md-order-by="claveMateria"><span>Materia</span></th>
+                <th md-column md-order-by="grupo" md-desc><span>Grupo</span></th>
+                <th md-column md-order-by="tituloMateria"><span>Titulo Materia</span></th>
                 <th md-column  ><span>Inspeccionar</span></th>
               </tr>
             </thead>
             <tbody md-body>
-              <tr md-row md-select="vm.actas"  md-auto-select="vm.options.autoSelect"  ng-repeat="(key, acta) in vm.actas | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
+              <tr md-row ng-repeat="(key, acta) in vm.actas | filter: vm.filter.search | orderBy: vm.query.order | limitTo: vm.query.limit : (vm.query.page -1) * vm.query.limit">
                 <td md-cell>{{acta.periodo}}</td>
-                <td md-cell>{{acta.claveMateria}}</td>
+                <td md-cell>{{acta.claveDepartamento}}-{{acta.claveMateria}}</td>
                 <td md-cell>{{acta.grupo}}</td>
                 <td md-cell>{{acta.tituloMateria}}</td>
                 <td md-cell layout="col">
