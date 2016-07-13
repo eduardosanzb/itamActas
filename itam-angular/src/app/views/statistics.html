@@ -65,11 +65,11 @@ THATS WHY THEY ARE HIDED -->
       </md-table-container>
       <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.alumnos.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
       <section  ng-if="vm.role != 0" layout="row" layout-align="end center" >
-            <md-button ng-click="vm.previewPdf($event)" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Visualizar el PDF</md-tooltip><i class="material-icons">picture_as_pdf</i> Ver Acta</md-button>
+            <md-button ng-click="vm.previewPdf()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Visualizar el PDF</md-tooltip><i class="material-icons">picture_as_pdf</i> Ver Acta</md-button>
             <md-button  ng-click="vm.reject($event, 'jefeDepartamento')" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Regresar al Profesor</md-tooltip><i class="material-icons">cancel</i> Regresar Acta</md-button>
       </section>
       <section  ng-if="vm.role == 0" layout="row" layout-align="end center" >
-            <md-button ng-click="vm.previewPdf($event)" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Visualizar el PDF</md-tooltip><i class="material-icons">picture_as_pdf</i> Ver Acta</md-button>
+            <md-button ng-click="vm.previewPdf()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Visualizar el PDF</md-tooltip><i class="material-icons">picture_as_pdf</i> Ver Acta</md-button>
             <md-button ng-click="vm.reject($event,'Director')" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Regresar al Jefe Dep.</md-tooltip><i class="material-icons">cancel</i> Regresar Acta</md-button>
       </section>
     </md-card>

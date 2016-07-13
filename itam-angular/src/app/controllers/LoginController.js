@@ -20,12 +20,10 @@
      *  ..- startTransaction(tId): Start the garding for the transaction
      */
     var vm = this;
-
     vm.credentials = {};
     vm.login = login;
 
     vm.imagePath = 'assets/images/itam.jpg';
-
 
     function login(){
       /* TODO 
@@ -35,23 +33,22 @@
        */
        loginService.auth(vm.credentials)
        .$promise.then(function(userData){
-        $localStorage.set('name', userData.firstName + " " +userData.lastName);
-        $rootScope.userName = userData.firstName + " " +userData.lastName;
-        //We have the data of the user, now we have to identify
-        // which groups he is part of.
-        groupService.get().$promise.then(function(groups){
-          $localStorage.setObject('auth',vm.credentials);
-          $rootScope.auth = vm.credentials;
-          var roles = [];
-          groups.data.forEach( function(member) {
-            if(userData.id === member.USER_ID_){
-              console.log(member.GROUP_ID_)
-              roles.push(member.GROUP_ID_);
-              $localStorage.setObject('groups', roles);
-              console.log(roles)
-            } 
-            
-          });
+          // We save the name of the user for laters
+          $localStorage.set('name', userData.firstName + " " +userData.lastName);
+          //We have the data of the user, now we have to identify
+          // which groups he is part of.
+          groupService.get().$promise.then(function(groups){
+            //We save the credentials for the http authentication
+            $localStorage.setObject('auth',vm.credentials);
+            var roles = [];
+            groups.data.forEach( function(member) {
+              //We push each group the user is in
+              if(userData.id === member.USER_ID_){
+                roles.push(member.GROUP_ID_);
+                $localStorage.setObject('groups', roles);
+              } 
+            });
+            //Redirection to the proper state depending which group the user is part of.
             if($localStorage.getObject('groups')){
               if($localStorage.getObject('groups').indexOf("jefesDepartamentos")==0 || $localStorage.getObject('groups').indexOf("direccion")==0)
               $state.go('home.revision');
@@ -66,9 +63,9 @@
                   .hideDelay(2000)
                   .position('Habla con tu Administrador')
               );
-            }
-            
-        });
+            } // if - else
+              
+          });
       }).catch(function(error){
         console.log("Credetials incorrect")
         $mdToast.show(

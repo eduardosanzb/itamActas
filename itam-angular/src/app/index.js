@@ -171,6 +171,7 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
         'hue-1': '50'
     });
 
+
     $mdThemingProvider.definePalette('defaultPrimary', {
       '50':  '#FFFFFF',
       '100': 'rgb(255, 198, 197)',

@@ -63,6 +63,8 @@
         //  of the controller
         vm.signTransaction = signTransaction;
         vm.reject = reject;
+        vm.previewPdf = previewPdf;
+
         
     /*SERVICES AND DATA API*/
       //Get the data for the table form the $LocalStorage
@@ -327,7 +329,16 @@
       }
       //This ONE next function is in the DOM in the buttons in the bottom of the md-table
       function previewPdf(){
-        
+        var object = {
+                  SWBGRUP_TERM_CODE: vm.tableData.SWBGRUP_TERM_CODE,
+                  SWBGRUP_CRN: vm.tableData.SWBGRUP_CRN,
+                  graficas: [vm.charAll, vm.chartNoNa]
+                 }
+        console.log(object)
+                 
+             pdfService.create(object).then(function(pdf){
+                $window.open(pdf);
+             })
       }
 
   }

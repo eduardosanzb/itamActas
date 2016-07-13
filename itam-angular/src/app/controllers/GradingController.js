@@ -55,6 +55,7 @@
           vm.sendTransaction = sendTransaction;
         /*SERVICES AND DATA API*/
           vm.tableData = $localStorage.getObject($stateParams.transactionId);
+          console.log(vm.tableData)
           if(vm.tableData.catCalificaciones){
             //This is the array of the possible grades
             vm.grades = $.map(vm.tableData.catCalificaciones, function(item){
@@ -145,7 +146,9 @@
                   calificaciones: angular.toJSON(vm.tableData.alumnos)
                  }
                  
-             pdfService.create(object)              
+             pdfService.create(object).then(function(pdf){
+                $window.open(pdf);
+             })
           }
           function sendTransaction(ev) {
             /*  This function has the purpose of start the transaction i the activiti backend

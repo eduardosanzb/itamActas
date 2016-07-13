@@ -8,8 +8,8 @@
     ]);
 
   function AdminController( $mdDialog, adminService, processService) {
-        /*  Template:   app/views/table-teacher.html
-         *  $state:     home.grading
+        /*  Template:   app/views/admin.html
+         *  $state:     home.admin
          *  - Variables
          *  ..- limitOptions: Options for the pagination of the table
          *  ..- filter: Empty object for the query filter of the table
@@ -20,6 +20,7 @@
          *  - Functions
          *  ..- startTransaction() : Function to start the transactions selected
          */
+        //Bind of the DOM with the controller
         var vm = this;
         /*INITIALIZING VARIABLES*/
           vm.selected = [];
@@ -45,20 +46,27 @@
          vm.refreshTransaction = getTransactions;
         /*SERVICES AND DATA API*/
         getTransactions();
-            
+        
         /*FUNCTIONS STRUCTURES*/
-          function getTransactions(){
+         function getTransactions(){
+            //The vm.promise is for the progress linear
             vm.promise = adminService.getTransactions().get().$promise.then(function(data){
-              vm.tableData = data.usuariosSrie;
+              vm.tableData = [].concat(data.actas);
             });
+            vm.promise2 = adminService.transactionsToPrint().then(function(response){
+                vm.printData = response.data.actas;
+              }).catch(function(error){
+                console.error(error)
+              });
           }
          function startTransactions (ev) {
-            /*  This function Creates a confirmation to start the transactions (Actas) and then start the flow.
+            /*  This function Creates a confirmation to start the transactions 
+             *    (Actas) and then start the flow.
              *  Strategy:
              *  1. Create a Dialog from the components library
              *  2. Utilize the event binding.
+             *  3. When confirmation create the object for each of the transactions
              */
-             console.log(vm.selected)
             var confirm = $mdDialog.confirm()
               .title('Activando Actas')
               .textContent('¿Estas Seguro de iniciar ' + vm.selected.length + ' Actas?')
@@ -66,9 +74,8 @@
               .targetEvent(ev)
               .ok('Si')
               .cancel('Cancelar');
-              $mdDialog.show(confirm).then(function() {
-                  console.log('Confirmando las Actas');
-                  console.log(vm.selected)
+
+            $mdDialog.show(confirm).then(function() {
                   angular.forEach(vm.selected, function(task){
                     var newInstance = {
                       "processDefinitionKey":"itamActasProcess",
@@ -87,16 +94,11 @@
                         }
                       ]
                     }
-                    var oldTransaction = {
-                      "swbgrupTermCode":task.SWBGRUP_TERM_CODE,
-                      "swbgrupCrn":task.SWBGRUP_CRN
-                    }
                     vm.selected = [];
                     vm.filter = {};
+                    console.log(newInstance)
                     processService.resolve(newInstance).$promise.then(function(){
-                    //adminService.releaseTransaction(oldTransaction).then(getTransactions);
-                    getTransactions();
-
+                      getTransactions();
                     });
                   }); //forEach
                 }, function() {

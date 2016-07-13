@@ -25,7 +25,11 @@
           var credentials = $localStorage.getObject('auth');
           var url = ServerUrl + "/ITAM-1.0/actas/status?swbgrupTermCode=" + transaction.swbgrupTermCode 
                 + "&swbgrupCrn=" + transaction.swbgrupCrn;
-                console.log(url)
+          return $http.get(url);
+        },
+        "transactionsToPrint" : function(){
+          var credentials = $localStorage.getObject('auth');
+          var url = ServerUrl + "/ITAM-1.0/actas/";
           return $http.get(url);
         }
       }
