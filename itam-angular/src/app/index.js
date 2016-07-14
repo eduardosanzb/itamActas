@@ -7,8 +7,8 @@ angular.module('itamActas', ['ngAnimate', 'ngCookies', 'ngTouch',
   'mdDataTable','chart.js','googlechart', 'ngResource'])
   
   //This is the Server to the REST stuff
-  //.constant('ServerUrl', "http://cloud.lucasianmexico.com:8585")
-  .constant('ServerUrl', "http://192.168.1.98:8585")
+  .constant('ServerUrl', "http://cloud.lucasianmexico.com:8585")
+  //.constant('ServerUrl', "http://192.168.1.98:8585")
   .run(function($rootScope){
     //This Will keep a track of the previous state the app was. Need it for the navigation
     $rootScope.$on('$stateChangeSuccess', function(event, to, toParams, from, fromParams){
