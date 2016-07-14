@@ -10,11 +10,11 @@
             
              <div>
              <!-- This is the logic validation for the send button -->
-             <div ng-hide="true" ng-repeat="student in vm.tableData.alumnos">
+              <div ng-hide="true" ng-repeat="student in vm.tableData.alumnos">
                   {{student.calificacion}}
                   {{vm.killTheCat = (!student.calificacion) ? true: false}}
                   {{vm.killTheCat}}
-            </div>
+              </div>
               <md-button ng-disabled="vm.killTheCat" ng-click="vm.sendTransaction($event)" class="md-fab md-defaultprimary " aria-label="save grades"><md-tooltip>Firmar y Enviar Acta</md-tooltip><i class="material-icons">email</i></md-button>
             </div>
         </md-toobar>
@@ -58,9 +58,20 @@
     </md-table-container>
     <md-table-pagination md-limit="vm.query.limit" md-limit-options="vm.limitOptions" md-page="vm.query.page" md-total="{{vm.tableData.alumnos.length}}" md-page-select="vm.options.pageSelect" md-boundary-links="vm.options.boundaryLinks" ></md-table-pagination>
     <section  layout="row" layout-align="end center" >
-          <md-button ng-click="vm.printPdf()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Previsualizar PDF</md-tooltip><i class="material-icons">picture_as_pdf</i>Revisar Acta</md-button>
+          <md-button ng-click="vm.printPdf($event)" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Previsualizar PDF</md-tooltip><i class="material-icons">picture_as_pdf</i>Revisar Acta</md-button>
           <md-button ng-click="vm.saveDraft()" class=" md-defaultprimary " aria-label="save grades"><md-tooltip>Continuar despues</md-tooltip><i class="material-icons">save</i>Guardar Borrador</md-button>
           
     </section>
+    <div >
+              <!-- HIdden shit for the waiting shit -->
+              <div style="visibility: hidden">
+                    <div class="md-dialog-container" id="myDialog">
+                      <md-dialog layout-padding>
+                        This shit is not working... I dont want to break my head... Fuck this!!
+                      </md-dialog>
+                    </div>
+                  </div>
+</div>
+  </div>
 </md-content>
 

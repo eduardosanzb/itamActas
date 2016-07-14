@@ -7,22 +7,14 @@
     ]);
     function pdfService ($resource, $http, Base64, $q, ServerUrl, groupService) {
       return {
-        'create':function(variables){          
-          variables = JSON.stringify(variables);
-          console.log(variables)
-          var url = 'http://192.168.1.125:9080'
-          return $resource( url + "/ITAM/example/reporte",
-                       null,
-                       {
-                        get:{
-                          method: 'POST',
-                          isArray: false
-                        }
-                       })
-                        .get(variables);
-
+        'create':function(variables){  
+          var url = ServerUrl + '/ITAM-1.0/reportes/big';  
+          var config = {
+            responseType: 'arraybuffer',
+            params: variables
+            }
+           return $http.get(url,config);
         }
-      }
-      
+      }//return body
     }
   })();

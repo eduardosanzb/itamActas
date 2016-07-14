@@ -4,14 +4,15 @@
         .controller('GradingController', [
             '$stateParams', '$mdEditDialog',
             '$rootScope','$state','$localStorage', 
-            'tasksService', '$mdDialog','pdfService',
+            'tasksService', '$mdDialog','pdfService', '$window',
+            '$timeout',
             GradingController
         ]);
 
     function GradingController($stateParams, $mdEditDialog, 
                                $rootScope, $state, 
                                $localStorage, tasksService,
-                               $mdDialog, pdfService) {
+                               $mdDialog, pdfService, $window, $timeout) {
     /*  Template:   app/views/partials/grading.html
      *  $state:     home.grading
      *  - Variables
@@ -132,23 +133,44 @@
               $localStorage.setObject($stateParams.transactionId, null);
               $state.go($rootScope.previousState);
           }
-          function printPdf() {
+          function DialogController(){
+            console.log("hola desde el controller del dialogo")
+          }
+          function printPdf(ev) {
             /*  This function has like purpose to preview the pdf of the transaction (Acta)
              *  Strategy:
              *  1. 
              *  2. 
-             *  3. Go back to the last function
+             *  3. 
              */
-
+             
+             $mdDialog.show({
+                controller: function () { this.parent = $scope; },
+                contentElement: '#myDialog',
+                parent: angular.element(document.body),
+                targetEvent: ev,
+                clickOutsideToClose: false
+              });
+             // The POST object or GET or wathever
              var object = {
-                  SWBGRUP_TERM_CODE: vm.tableData.SWBGRUP_TERM_CODE,
-                  SWBGRUP_CRN: vm.tableData.SWBGRUP_CRN,
-                  calificaciones: angular.toJSON(vm.tableData.alumnos)
+                  SWBGRUP_TERM_CODE: vm.tableData.swbgrupTermCode,
+                  SWBGRUP_CRN: vm.tableData.swbgrupCrn,
+                  calificaciones: angular.toJson(vm.tableData.alumnos)
                  }
-                 
-             pdfService.create(object).then(function(pdf){
-                $window.open(pdf);
-             })
+             pdfService.create(object).then(function(response){
+                var file = new window.Blob([response.data], {type: 'application/pdf'});
+                var fileURL = URL.createObjectURL(file);
+                console.log(fileURL)
+                //To add some UX use the timeout
+                $timeout(function(){
+                  window.open(fileURL);
+                  $mdDialog.hide();
+                },500)
+                
+              }, function(error){
+                console.error(error);
+              });
+
           }
           function sendTransaction(ev) {
             /*  This function has the purpose of start the transaction i the activiti backend
@@ -190,13 +212,6 @@
               },function(){
                 console.log("NO quiere enviarla")
               });              
-          }
-
-          vm.gradesValidator = function(grade){
-            if(grade !== null)
-              vm.gradesCounter++;
-            vm.activateButton = (vm.gradesCounter < vm.tableData.alumnos.length)
-                            ? true : false;
           }
 
     }
